@@ -1,0 +1,42 @@
+<section class="section">
+  <div class="container">
+    <h1 class="title">{{ isEdit ? 'Editar administrador' : 'Nuevo administrador' }}</h1>
+
+    <div *ngIf="error" class="notification is-danger">{{ error }}</div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <app-user-form-base
+        [form]="form"
+        [submitted]="submitted"
+        [isEdit]="isEdit">
+      </app-user-form-base>
+
+      <div class="field">
+        <label class="label" for="positionInCSU">Cargo en CSU</label>
+        <div class="control">
+          <input
+            id="positionInCSU"
+            class="input"
+            type="text"
+            formControlName="positionInCSU"
+            [ngClass]="{ 'is-danger': fieldInvalid('positionInCSU') }"
+            [attr.aria-invalid]="fieldInvalid('positionInCSU')"
+            [attr.aria-describedby]="fieldInvalid('positionInCSU') ? 'positionInCSU-error' : null"
+          />
+        </div>
+        <p id="positionInCSU-error" class="help is-danger" *ngIf="fieldInvalid('positionInCSU')">
+          {{ getError('positionInCSU') }}
+        </p>
+      </div>
+
+      <div class="field mt-4">
+        <div class="buttons">
+          <button type="submit" class="button is-primary" [disabled]="form.invalid">
+            {{ isEdit ? 'Actualizar' : 'Crear' }}
+          </button>
+          <button type="button" class="button is-danger" (click)="cancel()">Cancelar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

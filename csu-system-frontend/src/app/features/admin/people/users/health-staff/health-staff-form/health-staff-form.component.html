@@ -1,0 +1,49 @@
+<section class="section">
+  <div class="container">
+    <h1 class="title">{{ isEdit ? 'Editar personal de salud' : 'Nuevo personal de salud' }}</h1>
+
+    <div *ngIf="error" class="notification is-danger">{{ error }}</div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <app-user-form-base
+        [form]="form"
+        [submitted]="submitted"
+        [isEdit]="isEdit">
+      </app-user-form-base>
+
+      <div class="field">
+        <label class="label">Especialidad</label>
+        <div class="control">
+          <div class="select is-fullwidth" [ngClass]="{ 'is-danger': fieldInvalid('specialty') }">
+            <select formControlName="specialty">
+              <option [ngValue]="null" disabled>Seleccione una</option>
+              <option *ngFor="let s of specialties" [value]="s.value">{{ s.label }}</option>
+            </select>
+          </div>
+        </div>
+        <p class="help is-danger" *ngIf="fieldInvalid('specialty')">{{ getError('specialty') }}</p>
+      </div>
+
+      <div class="field">
+        <label class="label">Matrícula</label>
+        <div class="control">
+          <input
+            class="input"
+            type="text"
+            formControlName="license"
+            [ngClass]="{ 'is-danger': fieldInvalid('license') }" />
+        </div>
+        <p class="help is-danger" *ngIf="fieldInvalid('license')">{{ getError('license') }}</p>
+      </div>
+
+      <div class="field mt-4">
+        <div class="buttons">
+          <button type="submit" class="button is-primary" [disabled]="form.invalid">
+            {{ isEdit ? 'Actualizar' : 'Crear' }}
+          </button>
+          <button type="button" class="button is-danger" (click)="cancel()">Cancelar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

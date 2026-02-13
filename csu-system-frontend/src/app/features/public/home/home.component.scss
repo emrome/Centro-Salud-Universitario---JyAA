@@ -1,0 +1,15 @@
+@use '../../../../assets/styles/variables' as *;
+
+.hero {
+  background-color: $primary;
+}
+
+.section {
+  background-color: $background;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.title, .subtitle {
+  color: white;
+}

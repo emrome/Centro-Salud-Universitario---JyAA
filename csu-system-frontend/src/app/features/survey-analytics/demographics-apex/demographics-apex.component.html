@@ -1,0 +1,486 @@
+<section class="section">
+  <div class="container">
+
+    <!-- Título -->
+    <div class="level mb-4">
+      <div class="level-left">
+        <h1 class="title is-4 has-text-weight-semibold" style="color:#2E8B7B">
+          <span class="icon mr-2"><i class="fas fa-chart-bar" style="color:#4A9B8E"></i></span>
+          Demografía por barrio / campaña
+        </h1>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="box filters-box">
+      <div class="columns is-multiline is-vcentered">
+
+        <!-- Barrio -->
+        <div class="column is-12-mobile is-6-tablet is-3-desktop">
+          <div class="field">
+            <label class="label is-small">Barrio</label>
+            <div class="control">
+              <div class="select is-fullwidth">
+                <select [(ngModel)]="neighborhoodId"
+                        (ngModelChange)="onNeighborhoodChange($event)"
+                        [disabled]="!!campaignId">
+                  <option [ngValue]="undefined">Todos</option>
+                  <option *ngFor="let n of neighborhoods" [ngValue]="n.id">{{ n.name }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Campaña -->
+        <div class="column is-12-mobile is-6-tablet is-3-desktop">
+          <div class="field">
+            <label class="label is-small">Campaña</label>
+            <div class="control">
+              <div class="select is-fullwidth">
+                <select [(ngModel)]="campaignId"
+                        (ngModelChange)="onCampaignChange($event)">
+                  <option *ngFor="let c of filteredCampaigns" [ngValue]="c.id">{{ c.name }}</option>
+                </select>
+              </div>
+            </div>
+            <p class="help has-text-danger mt-1"
+               *ngIf="neighborhoodId && filteredCampaigns.length === 0">
+              Este barrio no tiene campañas asociadas.
+            </p>
+          </div>
+        </div>
+
+        <!-- Acciones -->
+        <div class="column is-12-mobile is-12-tablet is-3-desktop is-flex is-justify-content-flex-end is-align-items-flex-end">
+          <div class="buttons">
+            <button class="button is-primary"
+                    style="background:#4A9B8E;border-color:#4A9B8E"
+                    (click)="fetch()"
+                    [disabled]="loading || (!neighborhoodId && !campaignId)">
+              <span class="icon"><i class="fas fa-search"></i></span>
+              <span>Consultar</span>
+            </button>
+            <button class="button is-light" (click)="reset()">
+              <span class="icon"><i class="fas fa-times"></i></span>
+              <span>Limpiar</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estados -->
+      <div *ngIf="loading" class="has-text-centered py-3">
+        <button class="button is-white is-loading">Cargando datos…</button>
+      </div>
+      <article *ngIf="error" class="message is-danger mt-2">
+        <div class="message-body">
+          <span class="icon mr-2"><i class="fas fa-exclamation-triangle"></i></span>{{ error }}
+        </div>
+      </article>
+      <div *ngIf="summary">
+        <article *ngIf="hasSurveys(); else noSurveys" class="message is-success is-small mt-2">
+          <div class="message-body">Este {{ campaignId ? 'campaña' : 'barrio' }} tiene encuestas asociadas.</div>
+        </article>
+        <ng-template #noSurveys>
+          <article class="message is-warning is-small mt-2">
+            <div class="message-body">⚠ No hay información disponible.</div>
+          </article>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="box sticky-tabs" style="padding:.75rem 1rem;">
+      <div class="columns is-multiline">
+        <!-- Modo -->
+        <div class="column is-12-mobile is-4-tablet is-3-desktop">
+          <label class="label is-small">Modo</label>
+          <div class="select is-fullwidth">
+            <select [(ngModel)]="mode">
+              <option value="chart">Gráfico</option>
+              <option value="table">Tabla</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Tipo de vista -->
+        <div class="column is-12-mobile is-8-tablet is-9-desktop">
+          <label class="label is-small">Vista</label>
+          <div class="tabs is-toggle is-toggle-rounded is-fullwidth">
+            <ul>
+              <li *ngFor="let v of views" [class.is-active]="selectedView === v.key">
+                <a (click)="setView(v.key)">
+                  <span class="icon"><i class="fas" [ngClass]="v.icon"></i></span>
+                  <span>{{ v.label }}</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Selector mobile -->
+    <div class="box is-hidden-desktop" style="padding:.75rem 1rem;">
+      <div class="field">
+        <label class="label is-small">Vista</label>
+        <div class="control">
+          <div class="select is-fullwidth">
+            <select [(ngModel)]="selectedView" (change)="setView(selectedView)">
+              <option *ngFor="let v of views" [ngValue]="v.key">{{ v.label }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenido -->
+    <div *ngIf="summary as s; else emptyState">
+
+      <!-- TODOS: muestra pirámide + todos los gráficos -->
+      <div *ngIf="showAll()">
+        <div *ngIf="hasSurveys()">
+
+          <!-- Pirámide -->
+          <apx-chart
+            *ngIf="pyramidSeries.length"
+            [series]="pyramidSeries"
+            [chart]="pyramidChart"
+            [xaxis]="pyramidXAxis"
+            [yaxis]="pyramidYAxis"
+            [plotOptions]="pyramidPlot"
+            [dataLabels]="pyramidDataLabels"
+            [legend]="pyramidLegend"
+            [tooltip]="pyramidTooltip"
+            [annotations]="pyramidAnnotations"
+            [colors]="chartColors.gradient">
+          </apx-chart>
+
+          <!-- Género -->
+          <apx-chart
+            *ngIf="genderSeries.length"
+            [series]="genderSeries"
+            [chart]="pieChart"
+            [labels]="genderLabels"
+            [legend]="pieLegend"
+            [dataLabels]="pieDataLabels"
+            [tooltip]="pieTooltip"
+            [colors]="chartColors.pie">
+          </apx-chart>
+
+          <!-- Empleo -->
+          <apx-chart
+            *ngIf="jobData.length"
+            [series]="configureBarSeries(jobData, 'Empleo')"
+            [chart]="barChart"
+            [xaxis]="getXAxisConfig(jobLabels)"
+            [yaxis]="getYAxisConfig('Empleo')"
+            [plotOptions]="barPlot"
+            [dataLabels]="barDataLabels"
+            [colors]="[chartColors.primary]">
+          </apx-chart>
+
+          <!-- Educación -->
+          <apx-chart
+            *ngIf="eduData.length"
+            [series]="configureBarSeries(eduData, 'Educación')"
+            [chart]="barChart"
+            [xaxis]="getXAxisConfig(eduLabels)"
+            [yaxis]="getYAxisConfig('Educación')"
+            [plotOptions]="barPlot"
+            [dataLabels]="barDataLabels"
+            [colors]="[chartColors.secondary]">
+          </apx-chart>
+
+          <!-- Cobertura -->
+          <apx-chart
+            *ngIf="covData.length"
+            [series]="configureBarSeries(covData, 'Cobertura')"
+            [chart]="barChart"
+            [xaxis]="getXAxisConfig(covLabels)"
+            [yaxis]="getYAxisConfig('Cobertura')"
+            [plotOptions]="barPlot"
+            [dataLabels]="barDataLabels"
+            [colors]="[chartColors.accent]">
+          </apx-chart>
+        </div>
+      </div>
+
+      <!-- Pirámide individual -->
+      <div class="box" *ngIf="showPyramid()">
+        <p class="title is-5 mb-2">
+          <span class="icon mr-2"><i class="fas fa-layer-group" style="color:#4A9B8E"></i></span>
+          Pirámide poblacional (Edad × Género)
+        </p>
+
+        <ng-container *ngIf="pyramidSeries.length; else noPyramidData">
+          <apx-chart
+            [series]="pyramidSeries"
+            [chart]="pyramidChart"
+            [xaxis]="pyramidXAxis"
+            [yaxis]="pyramidYAxis"
+            [plotOptions]="pyramidPlot"
+            [dataLabels]="pyramidDataLabels"
+            [legend]="pyramidLegend"
+            [tooltip]="pyramidTooltip"
+            [annotations]="pyramidAnnotations"
+            [colors]="chartColors.gradient">
+          </apx-chart>
+        </ng-container>
+
+        <ng-template #noPyramidData>
+          <p class="has-text-grey">No hay datos para los filtros seleccionados.</p>
+        </ng-template>
+
+        <p class="help mt-2">
+          Masculino a la izquierda (valores negativos), femenino/otros a la derecha.
+        </p>
+      </div>
+
+      <!-- Grilla o individual -->
+      <div class="columns" *ngIf="showGender() || showJob() || showEdu()">
+
+        <!-- Género -->
+        <div class="column" *ngIf="showGender()">
+          <div class="box">
+            <p class="title is-6 mb-2">
+              <span class="icon mr-2"><i class="fas fa-users" style="color:#4A9B8E"></i></span>
+              Género / Identidad
+            </p>
+            <div class="is-flex is-justify-content-center">
+              <apx-chart
+                [chart]="pieChart"
+                [series]="genderSeries"
+                [labels]="genderLabels"
+                [colors]="chartColors.pie"
+                [dataLabels]="pieDataLabels"
+                [legend]="pieLegend"
+                [tooltip]="pieTooltip"
+                [plotOptions]="piePlotOptions">
+              </apx-chart>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empleo -->
+        <div class="column" *ngIf="showJob()">
+          <div class="box">
+            <p class="title is-6 mb-2">
+              <span class="icon mr-2"><i class="fas fa-briefcase" style="color:#4A9B8E"></i></span>
+              Tipo de empleo
+            </p>
+            <apx-chart
+              [series]="configureBarSeries(jobData, 'Empleos')"
+              [chart]="barChart"
+              [xaxis]="getXAxisConfig(jobLabels)"
+              [yaxis]="getYAxisConfig('Cantidad')"
+              [plotOptions]="barPlot"
+              [dataLabels]="barDataLabels"
+              [colors]="[chartColors.primary]">
+            </apx-chart>
+          </div>
+        </div>
+
+        <!-- Educación -->
+        <div class="column" *ngIf="showEdu()">
+          <div class="box">
+            <p class="title is-6 mb-2">
+              <span class="icon mr-2"><i class="fas fa-graduation-cap" style="color:#4A9B8E"></i></span>
+              Nivel educativo
+            </p>
+            <apx-chart
+              [series]="configureBarSeries(eduData, 'Educación')"
+              [chart]="barChart"
+              [xaxis]="getXAxisConfig(eduLabels)"
+              [yaxis]="getYAxisConfig('Cantidad')"
+              [plotOptions]="barPlot"
+              [dataLabels]="barDataLabels"
+              [colors]="[chartColors.secondary]">
+            </apx-chart>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cobertura -->
+      <div class="box" *ngIf="showCov()">
+        <p class="title is-6 mb-2">
+          <span class="icon mr-2"><i class="fas fa-heartbeat" style="color:#4A9B8E"></i></span>
+          Cobertura de salud
+        </p>
+        <apx-chart
+          [series]="configureBarSeries(covData, 'Cobertura')"
+          [chart]="barChart"
+          [xaxis]="getXAxisConfig(covLabels)"
+          [yaxis]="getYAxisConfig('Cantidad')"
+          [plotOptions]="barPlot"
+          [dataLabels]="barDataLabels"
+          [colors]="[chartColors.accent]">
+        </apx-chart>
+      </div>
+    </div>
+
+    <!-- Tablas -->
+    <div *ngIf="mode === 'table' && summary">
+
+      <!-- TODOS -->
+      <div *ngIf="showAllTable()">
+
+        <!-- Género -->
+        <div class="box mb-4">
+          <p class="title is-6 mb-3">
+            <span class="icon mr-2"><i class="fas fa-users" style="color:#4A9B8E"></i></span>
+            Género / Identidad
+          </p>
+          <table class="table is-fullwidth is-striped is-hoverable is-bordered">
+            <thead><tr><th>Grupo</th><th>Cantidad</th></tr></thead>
+            <tbody>
+            <tr *ngFor="let g of summary.gender">
+              <td>{{ g.group }}</td><td>{{ g.count }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Empleo -->
+        <div class="box mb-4">
+          <p class="title is-6 mb-3">
+            <span class="icon mr-2"><i class="fas fa-briefcase" style="color:#4A9B8E"></i></span>
+            Tipo de empleo
+          </p>
+          <table class="table is-fullwidth is-striped is-hoverable is-bordered">
+            <thead><tr><th>Grupo</th><th>Cantidad</th></tr></thead>
+            <tbody>
+            <tr *ngFor="let j of summary.job">
+              <td>{{ j.group }}</td><td>{{ j.count }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Educación -->
+        <div class="box mb-4">
+          <p class="title is-6 mb-3">
+            <span class="icon mr-2"><i class="fas fa-graduation-cap" style="color:#4A9B8E"></i></span>
+            Nivel educativo
+          </p>
+          <table class="table is-fullwidth is-striped is-hoverable is-bordered">
+            <thead><tr><th>Grupo</th><th>Cantidad</th></tr></thead>
+            <tbody>
+            <tr *ngFor="let e of summary.education">
+              <td>{{ e.group }}</td><td>{{ e.count }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Cobertura -->
+        <div class="box">
+          <p class="title is-6 mb-3">
+            <span class="icon mr-2"><i class="fas fa-heartbeat" style="color:#4A9B8E"></i></span>
+            Cobertura de salud
+          </p>
+          <table class="table is-fullwidth is-striped is-hoverable is-bordered">
+            <thead><tr><th>Grupo</th><th>Cantidad</th></tr></thead>
+            <tbody>
+            <tr *ngFor="let c of summary.coverage">
+              <td>{{ c.group }}</td><td>{{ c.count }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pirámide -->
+      <div *ngIf="selectedView === 'pyramid'">
+        <div class="notification is-info is-light">
+          <span class="icon mr-2"><i class="fas fa-info-circle"></i></span>
+          La pirámide poblacional es una funcionalidad disponible solo en <strong>modo gráfico</strong>.
+        </div>
+      </div>
+
+      <!-- Género -->
+      <div *ngIf="showGenderTable()">
+        <div class="box">
+          <p class="title is-6 mb-3">
+            <span class="icon mr-2"><i class="fas fa-users" style="color:#4A9B8E"></i></span>
+            Género / Identidad
+          </p>
+          <table class="table is-fullwidth is-striped is-hoverable is-bordered">
+            <thead><tr><th>Grupo</th><th>Cantidad</th></tr></thead>
+            <tbody>
+            <tr *ngFor="let g of summary.gender">
+              <td>{{ g.group }}</td><td>{{ g.count }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Empleo -->
+      <div *ngIf="showJobTable()">
+        <div class="box">
+          <p class="title is-6 mb-3">
+            <span class="icon mr-2"><i class="fas fa-briefcase" style="color:#4A9B8E"></i></span>
+            Tipo de empleo
+          </p>
+          <table class="table is-fullwidth is-striped is-hoverable is-bordered">
+            <thead><tr><th>Grupo</th><th>Cantidad</th></tr></thead>
+            <tbody>
+            <tr *ngFor="let j of summary.job">
+              <td>{{ j.group }}</td><td>{{ j.count }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Educación -->
+      <div *ngIf="showEduTable()">
+        <div class="box">
+          <p class="title is-6 mb-3">
+            <span class="icon mr-2"><i class="fas fa-graduation-cap" style="color:#4A9B8E"></i></span>
+            Nivel educativo
+          </p>
+          <table class="table is-fullwidth is-striped is-hoverable is-bordered">
+            <thead><tr><th>Grupo</th><th>Cantidad</th></tr></thead>
+            <tbody>
+            <tr *ngFor="let e of summary.education">
+              <td>{{ e.group }}</td><td>{{ e.count }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Cobertura -->
+      <div *ngIf="showCovTable()">
+        <div class="box">
+          <p class="title is-6 mb-3">
+            <span class="icon mr-2"><i class="fas fa-heartbeat" style="color:#4A9B8E"></i></span>
+            Cobertura de salud
+          </p>
+          <table class="table is-fullwidth is-striped is-hoverable is-bordered">
+            <thead><tr><th>Grupo</th><th>Cantidad</th></tr></thead>
+            <tbody>
+            <tr *ngFor="let c of summary.coverage">
+              <td>{{ c.group }}</td><td>{{ c.count }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- Estado vacío -->
+    <ng-template #emptyState>
+      <div class="has-text-centered has-text-grey py-6">
+        Ingresá un barrio o campaña y presioná <strong>Consultar</strong>.
+      </div>
+    </ng-template>
+
+  </div>
+</section>
+

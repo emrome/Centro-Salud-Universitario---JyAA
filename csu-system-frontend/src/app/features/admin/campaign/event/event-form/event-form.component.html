@@ -1,0 +1,55 @@
+<div class="box is-light">
+  <h2 class="subtitle is-6 mb-3">{{ eventToEdit ? 'Editar jornada' : 'Nueva jornada' }}</h2>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div *ngIf="error" class="notification is-danger">{{ error }}</div>
+
+    <div class="field">
+      <label class="label">Fecha</label>
+      <div class="control">
+        <input type="date" class="input" formControlName="date"
+               [attr.min]="minDate"
+               [attr.max]="maxDate"
+        />
+      </div>
+      <p class="help is-danger"
+         *ngIf="form.errors?.['dateOutOfRange'] && form.get('date')?.touched">
+        La fecha debe estar dentro del período de la campaña.
+      </p>
+    </div>
+
+    <div class="field">
+      <label class="label">Zona</label>
+      <div class="select is-fullwidth">
+        <select formControlName="zoneId">
+          <option [ngValue]="null" disabled>Seleccionar zona</option>
+          <option *ngFor="let z of zones" [value]="z.id">{{ z.name }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="label">Encuestadores</label>
+      <div class="control">
+        <div class="box" style="max-height: 12em; overflow-y: auto;">
+          <label *ngFor="let s of surveyors" class="checkbox is-block mb-1">
+            <input type="checkbox"
+                   [value]="s.id"
+                   (change)="onSurveyorCheckboxChange($event)"
+                   [checked]="form.value.surveyorIds.includes(s.id)" />
+            {{ s.firstName }} {{ s.lastName }}
+          </label>
+        </div>
+      </div>
+      <p *ngIf="form.errors?.['noSurveyors']" class="help is-danger">
+        Debe asignar al menos un encuestador.
+      </p>
+    </div>
+
+    <div class="buttons">
+      <button type="submit" class="button is-primary" [disabled]="form.invalid">
+        {{ eventToEdit ? 'Guardar cambios' : 'Crear jornada' }}
+      </button>
+    </div>
+  </form>
+</div>

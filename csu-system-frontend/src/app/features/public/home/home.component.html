@@ -1,0 +1,64 @@
+<section class="hero is-medium" style="
+  background: linear-gradient(135deg, #256f73, #4c9ea2);
+">
+  <div class="hero-body has-text-centered">
+    <div class="container">
+      <h1 class="title is-2 has-text-white">Bienvenido</h1>
+      <h2 class="subtitle is-5 has-text-white">
+        al Sistema de Análisis de Situación Integral de Salud
+      </h2>
+    </div>
+  </div>
+</section>
+
+<section class="section has-background-white">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-10-tablet is-8-desktop">
+        <div class="box" style="border-radius: 16px;">
+          <h2 class="title is-4 has-text-primary has-text-centered mb-4">¿Qué es ASIS?</h2>
+          <p class="is-size-5 has-text-justified" style="text-align: justify;">
+            El sistema permite <strong>gestionar campañas sanitarias, jornadas y encuestas</strong> para mejorar la salud en <strong>Villa Argüello</strong>.
+            Facilita decisiones basadas en <strong>datos georreferenciados</strong> y promueve el <strong>trabajo colaborativo</strong> con organizaciones sociales y el personal de salud.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="title is-4 has-text-centered has-text-black">Reportes públicos</h2>
+
+    <div *ngIf="loadingPublic" class="has-text-centered">Cargando reportes...</div>
+    <div *ngIf="errorPublic" class="notification is-danger has-text-centered">{{ errorPublic }}</div>
+
+    <div class="columns is-multiline">
+      <div class="column is-6" *ngFor="let rep of publicReports">
+        <div class="box" style="border-radius: 14px;">
+          <p class="is-size-7 has-text-grey">
+            {{ rep.createdDate | date:'dd/MM/yyyy' }}
+          </p>
+          <h3 class="title is-5 mb-2 has-text-black">{{ rep.name }}</h3>
+          <p class="is-size-6" style="text-align: justify;">{{ rep.description }}</p>
+
+          <div class="mt-3">
+            <a *ngIf="rep.id"
+               class="button is-link is-light"
+               [href]="apiBase + '/reports/' + rep.id + '/file'"
+               target="_blank" rel="noopener">
+              <span class="icon"><i class="fas fa-file-download"></i></span>
+              <span>Descargar PDF</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p *ngIf="!loadingPublic && !errorPublic && publicReports.length === 0"
+       class="has-text-grey has-text-centered">
+      Todavía no hay reportes públicos.
+    </p>
+  </div>
+</section>

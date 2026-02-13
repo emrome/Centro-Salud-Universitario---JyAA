@@ -1,0 +1,40 @@
+<div class="toolbar">
+  <div class="field">
+    <label>Barrio</label>
+    <select [(ngModel)]="neighborhoodId" (change)="onNeighborhoodChange()">
+      <option *ngFor="let n of neighborhoods" [ngValue]="n.id">{{ n.name }}</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label>Condición</label>
+    <select [(ngModel)]="condition" (change)="fetch()">
+      <option [ngValue]="'NONE'">Ninguna</option>
+      <option [ngValue]="'DIABETES'">Diabetes</option>
+      <option [ngValue]="'HYPERTENSION'">Hipertensión</option>
+      <option [ngValue]="'CARDIOVASCULAR'">Cardiovasculares</option>
+      <option [ngValue]="'RESPIRATORY'">Respiratorios</option>
+      <option [ngValue]="'SKIN'">En la piel</option>
+      <option [ngValue]="'VISION'">En la vista</option>
+      <option [ngValue]="'GASTROINTESTINAL'">Gastrointestinales</option>
+      <option [ngValue]="'GYNECOLOGICAL'">Ginecológicos</option>
+      <option [ngValue]="'ALLERGIES'">Alergias</option>
+      <option [ngValue]="'BONES_JOINTS'">En los huesos/articulaciones</option>
+      <option [ngValue]="'MENTAL_HEALTH'">Salud mental</option>
+      <option [ngValue]="'THYROID'">Problemas de tiroides</option>
+      <option [ngValue]="'DENTAL'">Odontológicos</option>
+      <option [ngValue]="'CANCER'">Cáncer</option>
+      <option [ngValue]="'STD'">ITS</option>
+      <option [ngValue]="'UNKNOWN'">No sabe / N/C</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label>Edad mínima</label>
+    <input type="number" [(ngModel)]="minAge" (change)="fetch()" placeholder="18" />
+  </div>
+</div>
+
+<article *ngIf="error" class="error">{{ error }}</article>
+
+<div id="map-analytics" class="map"></div>

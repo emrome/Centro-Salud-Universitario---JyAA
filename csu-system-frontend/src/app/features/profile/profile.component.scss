@@ -1,0 +1,19 @@
+.stack-helps {
+  display: grid;
+  gap: 0.15rem;
+  margin-top: 0.3rem;
+}
+
+.stack-helps--old     { min-height: 1.6rem; }
+.stack-helps--new     { min-height: 3.6rem; }
+.stack-helps--confirm { min-height: 2.0rem; }
+
+.help.is-danger {
+  font-size: 0.85rem;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.input.is-danger {
+  box-shadow: none;
+}

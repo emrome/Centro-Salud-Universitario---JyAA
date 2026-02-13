@@ -1,0 +1,47 @@
+<section class="section">
+  <div class="container">
+    <h1 class="title">{{ isEdit ? 'Editar representante' : 'Nuevo representante' }}</h1>
+
+    <div *ngIf="error" class="notification is-danger">{{ error }}</div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <app-user-form-base
+        [form]="form"
+        [submitted]="submitted"
+        [isEdit]="isEdit">
+      </app-user-form-base>
+
+      <div class="field">
+        <label class="label">Organización</label>
+
+        <div class="select is-fullwidth" *ngIf="!loadingOrganizations; else loadingOrgsTpl">
+          <select
+            formControlName="organizationId"
+            [ngClass]="{ 'is-danger': fieldInvalid('organizationId') }"
+            [attr.aria-invalid]="fieldInvalid('organizationId')"
+            [attr.aria-describedby]="fieldInvalid('organizationId') ? 'org-error' : null"
+          >
+            <option [ngValue]="null" disabled>Seleccionar organización</option>
+            <option *ngFor="let o of organizations" [ngValue]="o.id">{{ o.name }}</option>
+          </select>
+        </div>
+
+        <p id="org-error" class="help is-danger" *ngIf="fieldInvalid('organizationId')">
+          {{ getError('organizationId') }}
+        </p>
+        <ng-template #loadingOrgsTpl>
+          <p class="has-text-grey">Cargando organizaciones...</p>
+        </ng-template>
+      </div>
+
+      <div class="field mt-4">
+        <div class="buttons">
+          <button type="submit" class="button is-primary" [disabled]="form.invalid">
+            {{ isEdit ? 'Actualizar' : 'Crear' }}
+          </button>
+          <button type="button" class="button is-danger" (click)="cancel()">Cancelar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

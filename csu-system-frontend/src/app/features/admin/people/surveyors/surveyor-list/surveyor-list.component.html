@@ -1,0 +1,27 @@
+<section class="section">
+  <div class="container">
+    <h1 class="title">Encuestadores</h1>
+
+    <a class="button is-primary mb-4" [routerLink]="[paths.Admin.Surveyors.New]">+ Nuevo encuestador</a>
+
+    <div *ngIf="loading">Cargando...</div>
+    <div *ngIf="error" class="notification is-danger">{{ error }}</div>
+
+    <div class="box" *ngFor="let s of surveyors">
+      <div class="is-flex is-justify-content-space-between is-align-items-center mb-2">
+        <strong>{{ s.firstName }} {{ s.lastName }}</strong>
+        <div class="buttons">
+          <a class="button is-info is-small" [routerLink]="[paths.Admin.Surveyors.Edit(s.id)]">Editar</a>
+          <button class="button is-danger is-small" (click)="deleteSurveyor(s.id)">Eliminar</button>
+        </div>
+      </div>
+      <p class="has-text-grey">DNI: {{ s.dni }}</p>
+      <p class="has-text-grey">Género: {{ genderLabels[s.gender] || s.gender }}</p>
+      <p class="has-text-grey">Ocupación: {{ occupationLabels[s.occupation] || s.occupation }}</p>
+    </div>
+
+    <p *ngIf="!loading && surveyors.length === 0" class="has-text-grey">
+      No hay encuestadores registrados.
+    </p>
+  </div>
+</section>

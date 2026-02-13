@@ -1,0 +1,45 @@
+<section class="section">
+  <div class="container">
+    <h1 class="title">Barrios</h1>
+
+    <button class="button is-primary mb-4" (click)="goToNew()">+ Agregar barrio</button>
+
+    <div *ngIf="loading">Cargando...</div>
+    <div *ngIf="error" class="notification is-danger">{{ error }}</div>
+
+    <div class="box" *ngFor="let n of neighborhoods">
+      <div class="is-flex is-justify-content-space-between is-align-items-center mb-2">
+        <strong>{{ n.name }}</strong>
+        <div class="buttons">
+          <button class="button is-success is-small" (click)="toggleZones(n.id!)">Zonas</button>
+          <button class="button is-info is-small" (click)="goToEdit(n.id!)">Editar</button>
+          <button class="button is-danger is-small" (click)="deleteNeighborhood(n.id!)">Borrar</button>
+        </div>
+      </div>
+      <p class="has-text-grey">{{ n.description }}</p>
+      @if (n.geolocation && n.geolocation.length > 3) {
+        <app-map-polygon-preview
+          [coordinates]="n.geolocation"
+          height="160px">
+        </app-map-polygon-preview>
+      } @else {
+        <p class="has-text-grey mt-3">Sin coordenadas.</p>
+      }
+      @if(expandedNeighborhoodId === n.id!) {
+        @if(zones[n.id] && zones[n.id].length != 0){
+          <p class="has-text-grey mt-3">Zonas:</p>
+          <app-zone-list
+            [zones]="zones[n.id!]"
+            [neighborhoodName]="n.name"
+            (onDelete)="deleteZone($event)">
+          </app-zone-list>
+        } @else {
+        <p class="has-text-grey mt-3">No hay zonas</p>
+        }
+      }
+    </div>
+    <p *ngIf="!loading && neighborhoods.length === 0" class="has-text-grey">
+      No se encontraron barrios.
+    </p>
+  </div>
+</section>

@@ -1,0 +1,75 @@
+<aside class="sidebar">
+  <ul class="menu-list">
+    <li>
+      <a [routerLink]="paths.Admin.Dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <i class="fas fa-chart-line"></i>
+        <span>Dashboard</span>
+      </a>
+    </li>
+    <li>
+      <a [routerLink]="paths.Admin.Neighborhoods.List" routerLinkActive="active">
+        <i class="fas fa-map-marker-alt"></i>
+        <span>Barrios</span>
+      </a>
+    </li>
+    <li>
+      <a [routerLink]="paths.Admin.Campaigns.List" routerLinkActive="active">
+        <i class="fas fa-bullhorn"></i>
+        <span>Campañas</span>
+      </a>
+    </li>
+    <li>
+      <a [routerLink]="paths.Admin.Surveyors.List" routerLinkActive="active">
+        <i class="fas fa-user-check"></i>
+        <span>Encuestadores</span>
+      </a>
+    </li>
+    <li>
+      <a [routerLink]="paths.Admin.Organizations.List" routerLinkActive="active">
+        <i class="fas fa-users"></i>
+        <span>Org. Sociales</span>
+      </a>
+    </li>
+
+    <li>
+      <a (click)="toggleUsers()" [class.active]="isUsersActive() && !isUsersExpanded()">
+        <i class="fas fa-user-cog"></i>
+        <span>Usuarios</span>
+        <i class="fas" [ngClass]="{ 'fa-chevron-down': !isUsersExpanded(), 'fa-chevron-up': isUsersExpanded() }" style="margin-left: auto;"></i>
+      </a>
+      <ul *ngIf="isUsersExpanded()" class="ml-4">
+        <li>
+          <a [routerLink]="paths.Admin.Admins.List" routerLinkActive="active">
+            <i class="fas fa-user-shield"></i>
+            <span>Administradores</span>
+          </a>
+        </li>
+        <li>
+          <a [routerLink]="paths.Admin.HealthStaff.List" routerLinkActive="active">
+            <i class="fas fa-user-md"></i>
+            <span>Personal de Salud</span>
+          </a>
+        </li>
+        <li>
+          <a [routerLink]="paths.Admin.Representatives.List" routerLinkActive="active">
+            <i class="fas fa-handshake"></i>
+            <span>Representantes de Organizaciones</span>
+          </a>
+        </li>
+        <li>
+          <a [routerLink]="paths.Admin.UserEnablement.List" routerLinkActive="active">
+            <i class="fas fa-user-check"></i>
+            <span>Habilitación de usuarios</span>
+          </a>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <a [routerLink]="paths.Analytics.Summary" routerLinkActive="active">
+        <i class="fas fa-chart-bar"></i>
+        <span>Información demográfica</span>
+      </a>
+    </li>
+    <li><a [routerLink]="paths.Analytics.Map" routerLinkActive="active"><i class="fas fa-map"></i><span>Mapa sanitario</span></a></li>
+  </ul>
+</aside>

@@ -1,0 +1,34 @@
+.zone-list {
+  margin-top: 1rem;
+}
+
+.zone-card {
+  padding: 1rem;
+  border-top: 4px solid #e0e0e0;
+  border-left: 4px solid #00c4a7;
+  background-color: #fdfdfd;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .zone-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    strong {
+      font-size: 1rem;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+  }
+
+  .zone-description {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: #666;
+  }
+}

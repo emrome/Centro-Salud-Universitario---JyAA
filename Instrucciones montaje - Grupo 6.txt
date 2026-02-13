@@ -1,0 +1,175 @@
+📦 Instrucciones para montar el ambiente de pruebas del sistema CSU_System
+
+Este proyecto utiliza Docker y Docker Compose para facilitar su despliegue y ejecución en cualquier computadora.
+No es necesario instalar Tomcat ni MySQL manualmente.
+
+🧩 Requisitos previos:
+1. Tener instalado Docker y Docker Compose.
+2. Clonar el repositorio del proyecto con `git clone` o copiar los archivos localmente.
+
+📁 Estructura esperada del proyecto:
+- docker-compose.yml (en la raíz del proyecto)
+- target/CSU_System.war (generado por `mvn clean install` dentro del subproyecto CSU_System)
+- Subcarpeta `CSU_System/` con el código fuente y el archivo `pom.xml`.
+
+⚙️ Pasos para ejecutar el sistema:
+
+1. Desde una terminal, posicionarse en la carpeta raíz del proyecto (donde está `docker-compose.yml`).
+2. Ejecutar el siguiente comando:
+
+   docker-compose up --build
+
+Este comando iniciará:
+- Un contenedor con MySQL 8.0 llamado `csu_mysql` con la base de datos `csu_system_db`
+- Un contenedor con Tomcat 10.1 que desplegará automáticamente el archivo `CSU_System.war`
+
+🗂️ Configuración interna:
+- La base de datos se conecta desde el contenedor web con estos datos:
+  - Host: `csu_mysql`
+  - Usuario: `user`
+  - Contraseña: `pass`
+  - Base de datos: `csu_system_db`
+- Hibernate se encarga de generar las tablas automáticamente al arrancar (gracias a `hibernate.hbm2ddl.auto = update`)
+
+🌐 Acceso al sistema:
+Una vez levantado el entorno, el sistema estará disponible en:
+
+http://localhost:8080/CSU_System/abm-test
+
+✅ Eso es todo. No se requiere ninguna configuración adicional.
+
+🧪 Endpoints disponibles para pruebas (API REST)
+
+La API está documentada con Swagger. Accedé a:
+
+http://localhost:8080/CSU_System/resources/swagger-ui/
+
+📍 Endpoints de Barrios (/neighborhoods)
+
+- GET    /neighborhoods             → Listar todos los barrios
+- GET    /neighborhoods/{id}        → Obtener un barrio por ID
+- POST   /neighborhoods             → Crear un nuevo barrio (con coordenadas)
+- PUT    /neighborhoods/{id}        → Modificar un barrio
+- DELETE /neighborhoods/{id}        → Eliminar un barrio
+
+📍 Endpoints de Zonas dentro de cada Barrio (/neighborhoods/{neighborhoodId}/zones)
+
+- GET    /neighborhoods/{neighborhoodId}/zones  → Listar zonas de un barrio
+- GET    /neighborhoods/{neighborhoodId}/zones/{zoneId} → Obtener una zona por ID dentro de un barrio
+- POST   /neighborhoods/{neighborhoodId}/zones  → Crear una zona dentro del barrio especificado
+- PUT    /neighborhoods/{neighborhoodId}/zones/{zoneId} → Modificar una zona dentro de un barrio
+- DELETE /neighborhoods/{neighborhoodId}/zones/{zoneId} → Eliminar una zona dentro de un barrio
+
+📍 Endpoints de Encuestadores (/surveyors)
+
+- GET    /surveyors             → Listar todos los encuestadores
+- GET    /surveyors/{id}        → Obtener un encuestador por ID
+- POST   /surveyors             → Crear un nuevo encuestador
+- PUT    /surveyors/{id}        → Modificar un encuestador
+- DELETE /surveyors/{id}        → Eliminar un encuestador
+
+📍 Endpoints de Campañas (/campaigns)
+
+- GET    /campaigns             → Listar todas las campañas
+- GET    /campaigns/{id}        → Obtener una campaña por ID
+- POST   /campaigns             → Crear una nueva campaña
+- PUT    /campaigns/{id}        → Modificar una campaña existente
+- DELETE /campaigns/{id}        → Eliminar una campaña
+
+📍 Endpoints de Jornadas (/events)
+
+- GET    /campaigns/{id}/events             → Listar todas las jornadas
+- GET    /campaigns/{id}/events/{id}        → Obtener una jornada por ID
+- POST   /campaigns/{id}/events             → Crear una nueva jornada
+- PUT    /campaigns/{id}/events/{id}        → Modificar una jornada existente
+- DELETE /campaigns/{id}/events/{id}        → Eliminar una jornada
+
+📍 Endpoints de encuestas (/campaigns/{campaignId}/survey)
+- POST /campaigns/{id}/survey          → Subir una encuesta nueva, pisando la anterior
+- DELETE /campaigns/{id}/survey        → Eliminar una encuesta
+
+📍 Endpoints de organizaciones (/organizations)
+- GET /organizations → Listar todas las organizaciones
+- GET /organizations/{id} → Obtener una organización por ID
+- POST /organizations → Crear una nueva organización
+- PUT /organizations/{id} → Modificar una organización existente
+- DELETE /organizations/{id} → Eliminar una organización (borrado lógico, en cascada marca como eliminados a sus representantes)
+- GET /organizations/{id}/representatives → Listar los representantes asociados a esa organización
+
+📍 Endpoints de Usuarios por tipo:
+- /admins
+  - GET    /admins             → Listar todos los administradores
+  - GET    /admins/{id}        → Obtener un administrador por ID
+  - POST   /admins             → Crear un nuevo administrador
+  - PUT    /admins/{id}        → Modificar un administrador
+  - DELETE /admins/{id}        → Eliminar un administrador
+
+- /healthstaff
+    - GET    /healthstaff        → Listar todo el personal de salud
+    - GET    /healthstaff/{id}   → Obtener un miembro del personal de salud por ID
+    - POST   /healthstaff        → Crear un nuevo miembro del personal de salud
+    - PUT    /healthstaff/{id}   → Modificar un miembro del personal de salud
+    - DELETE /healthstaff/{id}   → Eliminar un miembro del personal de salud
+
+- /representatives
+    - GET    /representatives      → Listar todos los representantes de organizaciones sociales
+    - GET    /representatives/{id} → Obtener un representante por ID
+    - POST   /representatives      → Crear un nuevo representante
+    - PUT    /representatives/{id} → Modificar un representante
+    - DELETE /representatives/{id} → Eliminar un representante
+
+📌 Recomendaciones sobre el orden de creación de entidades
+
+Para garantizar el correcto funcionamiento de la API REST y evitar errores de integridad referencial, se recomienda seguir el siguiente orden de creación de entidades basado en sus dependencias:
+
+1️⃣ Primero crear: Neighborhood
+- Es base para zonas (`Zone`)
+- También es necesario para campañas (`Campaign`)
+- Se crea con nombre, descripción y coordenadas (las coordenadas se crean automáticamente al crear el barrio)
+
+2️⃣ Luego: Zone
+- Cada zona requiere el ID del barrio al que pertenece (`neighborhoodId`)
+- Las coordenadas de la zona también se cargan al momento de la creación
+
+3️⃣ Luego: Campaign
+- Requiere el ID de un barrio existente (`neighborhoodId`)
+
+4️⃣ Luego: Surveyor
+- No depende de otras entidades
+- Puede crearse en cualquier momento
+
+5️⃣ Luego: Event
+- Requiere:
+  - ID de la zona (`zoneId`)
+  - Lista de IDs de encuestadores (`surveyorsIds`)
+  - Chequea que la campaña recibida por parámetro exista
+- Por lo tanto, deben existir previamente zonas, encuestadores y campañas
+
+6️⃣ Usuarios:
+- Admin y HealthStaff pueden crearse en cualquier momento, no dependen de ninguna otra entidad.
+- Por ahora SocialOrgRepresentative se crean sin organización asociada.
+
+📏 Restricciones de unicidad y otras validaciones
+
+El sistema impone las siguientes validaciones para mantener la integridad de los datos:
+
+🔹 Barrios (Neighborhood)
+- No puede haber dos barrios con el mismo nombre
+
+🔹 Zonas (Zone)
+- No puede haber dos zonas con el mismo nombre
+
+🔹 Usuarios (Admin, HealthStaff, SocialOrgRepresentative)
+- No puede haber dos usuarios con el mismo email
+- No puede haber dos HealthStaff con la misma matrícula
+
+🔹 Encuestadores (Surveyor)
+- No puede haber dos encuestadores con el mismo DNI
+
+🔹 Campañas (Campaign)
+- No puede haber dos campañas con el mismo nombre
+- La fecha de inicio debe ser anterior a la fecha de fin
+
+🔹 Jornadas (Event)
+- La fecha de la jornada debe estar dentro del rango de fechas de la campaña asociada
+- No puede mandarse el mismo encuestador más de una vez en la misma jornada

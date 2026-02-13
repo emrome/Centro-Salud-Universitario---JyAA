@@ -1,0 +1,27 @@
+<section class="section">
+  <div class="container">
+    <h1 class="title">Personal de Salud</h1>
+
+    <button class="button is-primary mb-4" (click)="goToNew()">+ Nuevo profesional</button>
+
+    <div *ngIf="loading">Cargando...</div>
+    <div *ngIf="error" class="notification is-danger">{{ error }}</div>
+
+    <div class="box" *ngFor="let user of healthStaff">
+      <div class="is-flex is-justify-content-space-between is-align-items-center mb-2">
+        <strong>{{ user.firstName }} {{ user.lastName }}</strong>
+        <div class="buttons">
+          <button class="button is-info is-small" (click)="goToEdit(user.id!)">Editar</button>
+          <button class="button is-danger is-small" (click)="deleteUser(user.id!)">Borrar</button>
+        </div>
+      </div>
+      <p class="has-text-grey">Email: {{ user.email }}</p>
+      <p class="has-text-grey">Especialidad: {{ specialtyLabel[user.specialty] }}</p>
+      <p class="has-text-grey">Matrícula: {{ user.license }}</p>
+    </div>
+
+    <p *ngIf="!loading && healthStaff.length === 0" class="has-text-grey">
+      No se encontraron profesionales.
+    </p>
+  </div>
+</section>

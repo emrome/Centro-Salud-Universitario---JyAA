@@ -1,0 +1,341 @@
+/* Estilos para el componente de demografía */
+.demographics-container {
+  padding: 24px;
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+/* Header */
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #2E8B7B;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.page-title i {
+  color: #4A9B8E;
+}
+
+/* Filter Section */
+.filter-section {
+  margin-bottom: 32px;
+}
+
+.filter-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
+}
+
+.filter-controls {
+  display: flex;
+  align-items: end;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 120px;
+}
+
+.input-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin: 0;
+}
+
+.form-input {
+  padding: 10px 14px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #4A9B8E;
+  box-shadow: 0 0 0 3px rgba(74, 155, 142, 0.1);
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-primary, .btn-secondary {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.btn-primary {
+  background: #4A9B8E;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #2E8B7B;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(74, 155, 142, 0.3);
+}
+
+.btn-secondary {
+  background: white;
+  color: #6b7280;
+  border-color: #d1d5db;
+}
+
+.btn-secondary:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+/* Loading and Error States */
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px;
+  color: #4A9B8E;
+  font-weight: 500;
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e5e7eb;
+  border-top: 2px solid #4A9B8E;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-state {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 16px 20px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+/* Charts Container */
+.charts-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Chart Cards */
+.chart-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.chart-card:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+.pyramid-card {
+  grid-column: 1 / -1;
+}
+
+.chart-header {
+  padding: 20px 24px 0;
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 16px;
+}
+
+.chart-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 20px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chart-title i {
+  color: #4A9B8E;
+  font-size: 1.1rem;
+}
+
+.chart-content {
+  padding: 0 24px 24px;
+}
+
+/* Grid Layout */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 24px;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .charts-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .demographics-container {
+    padding: 16px;
+  }
+
+  .filter-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .input-group {
+    min-width: auto;
+  }
+
+  .button-group {
+    justify-content: center;
+  }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-card {
+    margin: 0 -8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .filter-card {
+    padding: 16px;
+    margin: 0 -8px;
+    border-radius: 8px;
+  }
+
+  .chart-content {
+    padding: 0 12px 16px;
+  }
+
+  .chart-header {
+    padding: 16px 12px 0;
+  }
+}
+
+/* ApexCharts Custom Overrides */
+:host ::ng-deep {
+  .apexcharts-tooltip {
+    background: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  .apexcharts-tooltip-title {
+    background: #f8fafc !important;
+    border-color: #e5e7eb !important;
+    color: #374151 !important;
+    font-weight: 600 !important;
+  }
+
+  .apexcharts-legend-text {
+    color: #374151 !important;
+  }
+
+  .apexcharts-gridline {
+    stroke: #f1f5f9 !important;
+  }
+
+  .apexcharts-text {
+    fill: #6b7280 !important;
+  }
+}
+/* Tabs activas con contraste */
+.tabs.is-toggle li.is-active a {
+  background: #4A9B8E;
+  border-color: #4A9B8E;
+  color: #fff !important;
+}
+.tabs.is-toggle a:hover {
+  border-color: #6BB6AB;
+}
+
+/* Caja de filtros con sombra suave */
+.filters-box {
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.05);
+}
+
+/* Tabs pegajosas al hacer scroll */
+.sticky-tabs {
+  position: sticky;
+  top: 0.75rem;
+  z-index: 5;
+  border-radius: 12px;
+}
+
+/* Espaciados suaves para las boxes */
+.box { border-radius: 12px; }
+
+/* Tabs que se acomodan sin scroll lateral */
+.tabs ul {
+  flex-wrap: wrap;
+}
+
+/* Espaciados suaves para las boxes */
+.box { border-radius: 12px; }
+.filters-box {
+  position: relative;
+}
+
+.sticky-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: #fff;
+  box-shadow: 0 1px 0 rgba(0,0,0,.05);
+}
+
+/* Ajustes de Apex en tarjetas */
+.apexcharts-canvas {
+  margin: 0 auto;
+}

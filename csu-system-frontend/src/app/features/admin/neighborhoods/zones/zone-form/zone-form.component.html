@@ -1,0 +1,27 @@
+<section class="section">
+  <div class="container">
+    <h1 class="title"> Barrio {{ neighborhoodName }}</h1>
+    <h2 class="subtitle">{{ isEdit ? 'Editar zona' : 'Nueva zona' }}</h2>
+
+    <div *ngIf="error" class="notification is-danger">{{ error }}</div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <app-entity-basic-fields [formGroup]="form"></app-entity-basic-fields>
+      <hr class="my-4">
+
+      <app-map-polygon-picker
+        [formArray]="geolocation"
+        [height]="'420px'">
+      </app-map-polygon-picker>
+
+      <div class="field mt-4">
+        <div class="buttons">
+          <button class="button is-primary" type="submit" [disabled]="form.invalid">
+            {{ isEdit ? 'Actualizar' : 'Crear' }}
+          </button>
+          <button type="button" class="button is-danger" (click)="cancel()">Cancelar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

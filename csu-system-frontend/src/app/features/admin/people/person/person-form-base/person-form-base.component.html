@@ -1,0 +1,62 @@
+<div [formGroup]="form">
+  <!-- Nombre -->
+  <div class="field">
+    <label class="label" for="firstName">Nombre</label>
+    <div class="control">
+      <input
+        id="firstName"
+        class="input"
+        type="text"
+        formControlName="firstName"
+        [ngClass]="{ 'is-danger': fieldInvalid('firstName') }"
+        [attr.aria-invalid]="fieldInvalid('firstName')"
+        [attr.aria-describedby]="fieldInvalid('firstName') ? 'firstName-error' : null"
+        autocomplete="given-name"
+      />
+    </div>
+    <p id="firstName-error" class="help is-danger" *ngIf="fieldInvalid('firstName')">
+      {{ getError('firstName') }}
+    </p>
+  </div>
+
+  <!-- Apellido -->
+  <div class="field">
+    <label class="label" for="lastName">Apellido</label>
+    <div class="control">
+      <input
+        id="lastName"
+        class="input"
+        type="text"
+        formControlName="lastName"
+        [ngClass]="{ 'is-danger': fieldInvalid('lastName') }"
+        [attr.aria-invalid]="fieldInvalid('lastName')"
+        [attr.aria-describedby]="fieldInvalid('lastName') ? 'lastName-error' : null"
+        autocomplete="family-name"
+      />
+    </div>
+    <p id="lastName-error" class="help is-danger" *ngIf="fieldInvalid('lastName')">
+      {{ getError('lastName') }}
+    </p>
+  </div>
+
+  <!-- Fecha de nacimiento -->
+  <div class="field">
+    <label class="label" for="birthDate">Fecha de nacimiento</label>
+    <div class="control">
+      <input
+        id="birthDate"
+        class="input"
+        type="date"
+        formControlName="birthDate"
+        [attr.max]="maxDate || null"
+        [ngClass]="{ 'is-danger': fieldInvalid('birthDate') }"
+        [attr.aria-invalid]="fieldInvalid('birthDate')"
+        [attr.aria-describedby]="fieldInvalid('birthDate') ? 'birthDate-error' : null"
+        autocomplete="bday"
+      />
+    </div>
+    <p id="birthDate-error" class="help is-danger" *ngIf="fieldInvalid('birthDate')">
+      {{ getError('birthDate') }}
+    </p>
+  </div>
+</div>

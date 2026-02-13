@@ -1,0 +1,69 @@
+<section class="section">
+  <div class="container">
+    <h1 class="title has-text-centered">Solicitudes de reporte</h1>
+
+    <div *ngIf="error" class="notification is-danger">{{ error }}</div>
+    <div *ngIf="success" class="notification is-success">{{ success }}</div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="card mb-5">
+      <div class="card-content">
+        <div class="field">
+          <label class="label">Descripción del pedido</label>
+          <div class="control">
+            <textarea class="textarea" formControlName="description" placeholder="Describe el reporte"></textarea>
+          </div>
+          <p class="help is-danger" *ngIf="form.get('description')?.invalid && form.get('description')?.touched">Requerido</p>
+        </div>
+
+        <div class="field has-text-centered mt-4">
+          <button type="submit" class="button is-primary" [disabled]="form.invalid || loading">
+            Crear solicitud
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <div *ngIf="loading">Cargando solicitudes...</div>
+
+    <div class="columns">
+      <div class="column">
+        <h2 class="subtitle">Pendientes</h2>
+        <div class="box" *ngFor="let r of pending">
+          <div class="is-flex is-justify-content-space-between is-align-items-center">
+            <div>
+              <p class="has-text-weight-semibold">Solicitud #{{ r.id }}</p>
+              <p class="is-size-7 has-text-grey">Creada: {{ r.createdAt | date:'short' }}</p>
+              <p class="mt-2">{{ r.description }}</p>
+            </div>
+            <span class="tag is-warning">PENDIENTE</span>
+          </div>
+        </div>
+        <p *ngIf="!loading && pending.length===0" class="has-text-grey">No hay solicitudes pendientes.</p>
+      </div>
+
+      <div class="column">
+        <h2 class="subtitle">Resueltas / Rechazadas</h2>
+        <div class="box" *ngFor="let r of completed">
+          <div class="is-flex is-justify-content-space-between is-align-items-center">
+            <div>
+              <p class="has-text-weight-semibold">Solicitud #{{ r.id }}</p>
+              <p class="is-size-7 has-text-grey" *ngIf="r.resolvedByName">Resuelta por: {{ r.resolvedByName }}</p>
+              <p class="is-size-7 has-text-grey">Resuelta: {{ r.resolvedAt | date:'shortDate' }}</p>
+              <p class="mt-2">{{ r.description }}</p>
+            </div>
+            <div class="has-text-right">
+              <button *ngIf="r.status === 'COMPLETED' && r.reportId"
+                      class="button is-link is-light"
+                      (click)="download(r.reportId)">
+                Descargar PDF
+              </button>
+              <span class="tag is-success ml-2" *ngIf="r.status==='COMPLETED'">COMPLETADA</span>
+              <span class="tag is-danger ml-2" *ngIf="r.status==='REJECTED'">RECHAZADA</span>
+            </div>
+          </div>
+        </div>
+        <p *ngIf="!loading && completed.length===0" class="has-text-grey">Sin solicitudes resueltas.</p>
+      </div>
+    </div>
+  </div>
+</section>

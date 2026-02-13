@@ -1,0 +1,43 @@
+<div class="events-scroll mt-2">
+  <div class="columns is-multiline">
+    <div class="column is-12-tablet is-6-desktop" *ngFor="let e of events">
+      <div class="box mb-4 p-4 has-background-white-light">
+        <p class="is-flex is-align-items-center mb-2">
+            <span class="icon mr-2">📅</span>
+            <span class="has-text-weight">{{ e.date | fullDateEs }}</span>
+        </p>
+        <p class="is-flex is-align-items-center mb-2">
+          <span class="icon mr-2">📍</span>
+          <span class="has-text-weight">Zona:</span>
+          <span class="tag is-info is-light ml-2">{{ zonesByEvent[e.id!] || 'Zona desconocida' }}</span>
+        </p>
+        <p class="is-flex is-align-items-center mb-2">
+          <span class="icon mr-2">🧍‍♂️</span>
+          <span class="has-text-weight">Encuestadores:</span>
+        </p>
+
+        <p class="ml-5">
+          <ng-container *ngIf="surveyorsByEvent[e.id!]?.length; else noSurveyors">
+            <span class="tag is-light mr-1 mb-1" *ngFor="let s of surveyorsByEvent[e.id!]">{{ s }}</span>
+          </ng-container>
+          <ng-template #noSurveyors>
+            <span class="has-text-grey">(Sin encuestadores asignados)</span>
+          </ng-template>
+        </p>
+
+        <div class="buttons is-flex is-justify-content-flex-end mt-2">
+          <button type="button" class="button is-danger is-light is-small" (click)="delete(e.id!)">
+            <span class="icon"><i class="fas fa-trash"></i></span>
+            <span>Borrar</span>
+          </button>
+          @if(isList){
+            <button type="button" class="button is-primary is-light is-small" (click)="edit(e)">
+              <span class="icon"><i class="fas fa-pen"></i></span>
+              <span>Editar</span>
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,48 @@
+@use "bulma/bulma";
+@use "assets/styles/variables" as *;
+
+@import 'leaflet/dist/leaflet.css';
+@import 'leaflet-draw/dist/leaflet.draw.css';
+
+
+body {
+  font-family: $family-sans-serif;
+  background-color: $background;
+  color: $text;
+}
+
+.button, .card {
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+}
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+app-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: 0;
+  padding: 0;
+  line-height: 0;
+  cursor: pointer;
+}
+
+.password-toggle:focus-visible {
+  outline: 2px solid #485fc7; /* color primario de Bulma por defecto */
+  border-radius: 4px;
+}

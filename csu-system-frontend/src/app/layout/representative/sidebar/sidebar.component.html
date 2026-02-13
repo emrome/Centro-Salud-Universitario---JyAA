@@ -1,0 +1,23 @@
+<aside class="sidebar">
+  <ul class="menu-list">
+    <li>
+      <a
+        [routerLink]="paths.Representative.Dashboard"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <i class="fas fa-home"></i>
+        <span>Dashboard</span>
+      </a>
+    </li>
+    <li>
+      <a
+        [routerLink]="paths.Representative.ReportRequests.List"
+        routerLinkActive="active"
+      >
+        <i class="fas fa-file-alt"></i>
+        <span>Solicitudes de reporte</span>
+      </a>
+    </li>
+  </ul>
+</aside>

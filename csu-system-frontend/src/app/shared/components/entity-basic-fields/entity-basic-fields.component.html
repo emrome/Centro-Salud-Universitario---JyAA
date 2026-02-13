@@ -1,0 +1,19 @@
+<div [formGroup]="formGroup">
+  <div class="field">
+    <label class="label">Nombre</label>
+    <div class="control">
+      <input class="input" type="text" formControlName="name" required />
+    </div>
+    <p class="help is-danger" *ngIf="formGroup.get('name')?.invalid && formGroup.get('name')?.touched">
+      El nombre es obligatorio.
+    </p>
+  </div>
+
+  <div class="field">
+    <label class="label">Descripción</label>
+    <div class="control">
+      <textarea class="textarea" formControlName="description"></textarea>
+    </div>
+  </div>
+</div>
+

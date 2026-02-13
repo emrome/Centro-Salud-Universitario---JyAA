@@ -1,0 +1,26 @@
+<section class="section">
+  <div class="container">
+    <h1 class="title">Administradores</h1>
+
+    <button class="button is-primary mb-4" (click)="goToNew()">+ Nuevo administrador</button>
+
+    <div *ngIf="loading">Cargando...</div>
+    <div *ngIf="error" class="notification is-danger">{{ error }}</div>
+
+    <div class="box" *ngFor="let admin of admins">
+      <div class="is-flex is-justify-content-space-between is-align-items-center mb-2">
+        <strong>{{ admin.firstName }} {{ admin.lastName }}</strong>
+        <div class="buttons">
+          <button class="button is-info is-small" (click)="goToEdit(admin.id!)">Editar</button>
+          <button class="button is-danger is-small" (click)="deleteAdmin(admin.id!)">Borrar</button>
+        </div>
+      </div>
+      <p class="has-text-grey">Email: {{ admin.email }}</p>
+      <p class="has-text-grey">Cargo: {{ admin.positionInCSU }}</p>
+    </div>
+
+    <p *ngIf="!loading && admins.length === 0" class="has-text-grey">
+      No se encontraron administradores.
+    </p>
+  </div>
+</section>

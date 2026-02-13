@@ -1,0 +1,220 @@
+<section class="section">
+  <div class="container">
+    <h1 class="title has-text-centered">{{ isEdit ? 'Editar campaña' : 'Nueva campaña' }}</h1>
+
+    <div *ngIf="error" class="notification is-danger">{{ error }}</div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="card">
+      <div class="card-content">
+
+        <div class="field">
+          <label class="label">Nombre de la campaña</label>
+          <div class="control">
+            <input class="input" type="text" formControlName="name" />
+          </div>
+          <p class="help is-danger" *ngIf="form.get('name')?.invalid && form.get('name')?.touched">Requerido</p>
+        </div>
+
+        <div class="columns is-mobile">
+          <div class="column">
+            <div class="field">
+              <label class="label">Fecha de inicio</label>
+              <div class="control">
+                <input class="input" type="date" formControlName="startDate"
+                       [attr.max]="form.get('endDate')?.value || null" />
+              </div>
+            </div>
+          </div>
+          <div class="column">
+            <div class="field">
+              <label class="label">Fecha de fin</label>
+              <div class="control">
+                <input class="input" type="date" formControlName="endDate"
+                       [attr.min]="form.get('startDate')?.value || null" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="help is-danger" *ngIf="form.errors?.['dateRangeInvalid']">
+          La fecha de fin no puede ser anterior a la fecha de inicio.
+        </p>
+        <p class="help is-danger" *ngIf="form.errors?.['startExcludesEvents']">
+          La fecha de inicio no puede dejar afuera jornadas ya cargadas (primera jornada: {{ earliestEventDate }}).
+        </p>
+        <p class="help is-danger" *ngIf="form.errors?.['endExcludesEvents']">
+          La fecha de fin no puede dejar afuera jornadas ya cargadas (última jornada: {{ latestEventDate }}).
+        </p>
+
+        <div class="field">
+          <label class="label">Barrio</label>
+          <div class="control">
+            @if (isEdit){
+              <div class="card has-background-light">
+                <div class="card-content">
+                  {{ getNeighborhoodName(form.value.neighborhoodId) }}
+                </div>
+              </div>
+            } @else {
+              <div class="select is-fullwidth">
+                <select formControlName="neighborhoodId">
+                  <option [ngValue]="null" disabled>Seleccionar barrio</option>
+                  <option *ngFor="let n of neighborhoods" [value]="n.id">{{ n.name }}</option>
+                </select>
+              </div>
+              <p class="help is-danger" *ngIf="form.get('neighborhoodId')?.invalid && form.get('neighborhoodId')?.touched">Requerido</p>
+            }
+          </div>
+        </div>
+
+        @if (isEdit){
+          <div class="field mt-5">
+            <label class="label">Jornadas asociadas</label>
+            <div class="card">
+              <div class="card-content">
+                @if(events && events.length != 0){
+                  <app-event-list
+                    [events]="events"
+                    [isList]="false"
+                    [zonesByEvent]="zonesByEvent"
+                    [surveyorsByEvent]="surveyorsByEvent"
+                    (onDelete)="deleteEvent($event)">
+                    ></app-event-list>
+                } @else if(loadingEvents) {
+                  <p class="has-text-grey">Cargando jornadas...</p>
+                } @else {
+                  <p class="has-text-grey">No hay jornadas asociadas.</p>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Sección de encuesta integrada -->
+          <div class="card">
+            <div class="card-content">
+              <!-- Mensajes de estado -->
+              <div *ngIf="successMessage" class="notification is-success is-light">
+                <button type="button" class="delete" (click)="successMessage = null"></button>
+                {{ successMessage }}
+              </div>
+              <div *ngIf="errorMessage" class="notification is-danger is-light">
+                <button type="button" class="delete" (click)="errorMessage = null"></button>
+                {{ errorMessage }}
+              </div>
+              <ng-container *ngIf="campaign?.survey as survey; else noSurvey">
+                <app-survey-info-box
+                  [survey]="survey"
+                  (deleteRequested)="deleteSurvey()">
+                </app-survey-info-box>
+
+                <button type="button"
+                        class="button is-warning is-small mt-3"
+                        (click)="showUploadForm = true">
+                  <span class="icon"><i class="fas fa-sync"></i></span>
+                  <span>Reemplazar encuesta</span>
+                </button>
+              </ng-container>
+
+              <ng-template #noSurvey>
+                <div class="has-text-centered py-4">
+                  <p class="has-text-grey mb-3">No hay encuesta importada</p>
+                  <button type="button"
+                          class="button is-info"
+                          (click)="showUploadForm = true">
+                    <span class="icon"><i class="fas fa-upload"></i></span>
+                    <span>Importar encuesta</span>
+                  </button>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+        } @else {
+          <p class="has-text-grey">Para agregar jornadas primero debes guardar la campaña.</p>
+        }
+
+        <div class="field mt-5 has-text-centered">
+          <div class="buttons is-centered">
+            <button type="submit"
+                    class="button is-primary"
+                    [disabled]="form.invalid"
+                    [class.is-loading]="isSubmitting">
+              {{ isEdit ? 'Actualizar' : 'Crear' }}
+            </button>
+            <button type="button" class="button is-light" (click)="cancel()">
+              Cancelar
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </form>
+  </div>
+</section>
+
+<div class="modal" [class.is-active]="showUploadForm" *ngIf="isEdit">
+  <div class="modal-background" (click)="showUploadForm = false"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">
+        <span class="icon mr-2"><i class="fas fa-file-csv"></i></span>
+        Importar encuesta
+      </p>
+      <button class="delete" (click)="showUploadForm = false"></button>
+    </header>
+
+    <section class="modal-card-body">
+      <!-- CSV Form File -->
+      <div *ngIf="uploadErrorMessage" class="notification is-danger is-light" role="alert" aria-live="polite">
+        <button type="button" class="delete" (click)="uploadErrorMessage = false"></button>
+        <strong>No pudimos importar la encuesta.</strong><br>
+        Verificá que los archivos sean CSV válidos y correspondan a cada campo. Volvé a seleccionarlos e intentá de nuevo.
+      </div>
+      <div class="field">
+        <label class="label">Archivo CSV - Formulario (Form)</label>
+        <div class="file has-name is-fullwidth">
+          <label class="file-label">
+            <input class="file-input" type="file" accept=".csv" (change)="onFileChange($event, 'form')" />
+            <span class="file-cta">
+              <span class="file-icon"><i class="fas fa-upload"></i></span>
+              <span class="file-label">Elegir archivo</span>
+            </span>
+            <span class="file-name">{{ formCsv?.name ?? 'Ningún archivo seleccionado' }}</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- CSV Branch File -->
+      <div class="field mt-4">
+        <label class="label">Archivo CSV - Personas (Branch)</label>
+        <div class="file has-name is-fullwidth">
+          <label class="file-label">
+            <input class="file-input" type="file" accept=".csv" (change)="onFileChange($event, 'branch')" />
+            <span class="file-cta">
+              <span class="file-icon"><i class="fas fa-upload"></i></span>
+              <span class="file-label">Elegir archivo</span>
+            </span>
+            <span class="file-name">{{ branchCsv?.name ?? 'Ningún archivo seleccionado' }}</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="message is-info mt-4">
+        <div class="message-body is-small">
+          La importación se guarda inmediatamente y no requiere hacer clic en "Actualizar campaña".
+        </div>
+      </div>
+    </section>
+
+    <footer class="modal-card-foot">
+      <button type="button"
+              class="button is-primary"
+              (click)="uploadSurvey()"
+              [disabled]="!formCsv || !branchCsv"
+              [class.is-loading]="isUploading">
+        <span class="icon"><i class="fas fa-paper-plane"></i></span>
+        <span>Subir encuesta</span>
+      </button>
+      <button class="button" (click)="showUploadForm = false">Cancelar</button>
+    </footer>
+  </div>
+</div>

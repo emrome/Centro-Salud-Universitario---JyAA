@@ -1,0 +1,112 @@
+<section class="section">
+  <div class="container">
+    <h1 class="title has-text-centered">Solicitudes</h1>
+
+    <div class="tabs is-boxed is-centered tabs-spaced">
+      <ul>
+        <li [class.is-active]="currentTab==='pending'"><a (click)="setTab('pending')"><i class="fas fa-inbox mr-2"></i>Pendientes</a></li>
+        <li [class.is-active]="currentTab==='resolved'"><a (click)="setTab('resolved')"><i class="fas fa-check-circle mr-2"></i>Resueltas</a></li>
+        <li [class.is-active]="currentTab==='rejected'"><a (click)="setTab('rejected')"><i class="fas fa-times-circle mr-2"></i>Rechazadas</a></li>
+      </ul>
+    </div>
+
+    <div *ngIf="error" class="notification is-danger">{{ error }}</div>
+    <div *ngIf="success" class="notification is-success">{{ success }}</div>
+    <div *ngIf="loading">Cargando...</div>
+
+    <ng-container *ngIf="currentTab==='pending'">
+      <div class="request-card" *ngFor="let r of pending; trackBy: trackByRequestId">
+        <div class="request-meta">
+          <p class="request-id">Solicitud #{{ r.id }}</p>
+          <p class="is-size-7 has-text-grey" *ngIf="r.requesterName">Solicitante: {{ r.requesterName }}</p>
+          <p class="mt-2">Descripción: {{ r.description }}</p>
+        </div>
+
+        <div class="request-actions">
+          <div class="field">
+            <label class="label">Archivo</label>
+            <div class="file has-name is-fullwidth">
+              <label class="file-label">
+                <input class="file-input" type="file" accept="application/pdf,image/png,image/jpeg" (change)="onPickFile($event, r.id!)">
+                <span class="file-cta">
+                  <span class="file-icon"><i class="fas fa-upload"></i></span>
+                  <span class="file-label">Elegir archivo</span>
+                </span>
+                <span class="file-name">{{ fileMap[r.id!]?.name || 'Ningún archivo seleccionado' }}</span>
+              </label>
+            </div>
+          </div>
+
+          <form [formGroup]="completeForm" class="mt-3">
+            <div class="columns">
+              <div class="column">
+                <label class="label">Nombre del reporte</label>
+                <input class="input" type="text" formControlName="name">
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">Descripción</label>
+              <textarea class="textarea" formControlName="description"></textarea>
+            </div>
+            <div class="field mt-2">
+              <label class="checkbox">
+                <input type="checkbox" formControlName="isPublic">
+                Público (visible en Home)
+              </label>
+              <p class="help is-info">Si está marcado, el reporte aparecerá en la página de inicio.</p>
+            </div>
+            <div class="buttons mt-2">
+              <button type="button" class="button is-success" (click)="complete(r)">
+                <span class="icon"><i class="fas fa-paper-plane"></i></span>
+                <span>Completar</span>
+              </button>
+              <button type="button" class="button is-danger is-light" (click)="reject(r)">
+                <span class="icon"><i class="fas fa-ban"></i></span>
+                <span>Rechazar</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <p *ngIf="!loading && pending.length===0" class="has-text-grey has-text-centered">Sin pendientes.</p>
+    </ng-container>
+
+    <ng-container *ngIf="currentTab==='resolved'">
+      <div class="request-card is-resolved" *ngFor="let r of resolved; trackBy: trackByRequestId">
+        <div class="request-meta">
+          <p class="request-id">Solicitud #{{ r.id }}</p>
+          <p class="is-size-7 has-text-grey" *ngIf="r.requesterName">Solicitante: {{ r.requesterName }}</p>
+          <p class="is-size-7 has-text-grey" *ngIf="r.resolvedByName">Resuelto por: {{ r.resolvedByName }}</p>
+          <p class="is-size-7 has-text-grey">Resuelto: {{ r.resolvedAt | date:'short' }}</p>
+          <p class="mt-2">{{ r.description }}</p>
+        </div>
+        <div class="request-actions resolved-actions">
+          <div>
+            <span class="tag is-success mr-2">COMPLETADA</span>
+            <button class="button is-link is-light" *ngIf="r.reportId" (click)="download(r.reportId)">
+              <span class="icon"><i class="fas fa-file-download"></i></span>
+              <span>Descargar PDF</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <p *ngIf="!loading && resolved.length===0" class="has-text-grey has-text-centered">Sin resueltas.</p>
+    </ng-container>
+
+    <ng-container *ngIf="currentTab==='rejected'">
+      <div class="request-card is-rejected" *ngFor="let r of rejected; trackBy: trackByRequestId">
+        <div class="request-meta">
+          <p class="request-id">Solicitud #{{ r.id }}</p>
+          <p class="is-size-7 has-text-grey" *ngIf="r.requesterName">Solicitante: {{ r.requesterName }}</p>
+          <p class="is-size-7 has-text-grey" *ngIf="r.resolvedByName">Rechazado por: {{ r.resolvedByName }}</p>
+          <p class="is-size-7 has-text-grey">Resuelta: {{ r.resolvedAt | date:'shortDate' }}</p>
+          <p class="mt-2">{{ r.description }}</p>
+        </div>
+        <div class="request-actions">
+          <span class="tag is-danger">RECHAZADA</span>
+        </div>
+      </div>
+      <p *ngIf="!loading && rejected.length===0" class="has-text-grey has-text-centered">Sin rechazadas.</p>
+    </ng-container>
+  </div>
+</section>

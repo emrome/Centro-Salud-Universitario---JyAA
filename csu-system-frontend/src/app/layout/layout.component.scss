@@ -1,0 +1,34 @@
+@use '../../assets/styles/variables' as *;
+
+.wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.columns {
+  flex: 1;
+  display: flex;
+}
+
+.sidebar {
+  width: 220px;
+  background-color: $link;
+  color: white;
+  display: flex;
+  padding-left: 0.5rem;
+  padding-top: 1rem;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  flex: 1;
+  padding: 1rem;
+  background: $background;
+}

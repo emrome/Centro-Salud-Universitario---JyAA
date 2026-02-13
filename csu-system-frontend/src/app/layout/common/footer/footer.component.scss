@@ -1,0 +1,24 @@
+@use '../../../../assets/styles/variables' as *;
+
+.asis-footer {
+  background-color: $secondary;
+  color: $text-inverse;
+  font-size: 0.8rem;
+  padding: 1rem 0;
+
+  .asis-footer-content {
+    text-align: center;
+
+    p {
+      margin: 0.2rem 0;
+    }
+  }
+}
+.social-links a {
+  color: $text-inverse;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: $accent;
+  }
+}

@@ -1,0 +1,15 @@
+<div class="field">
+  <label class="label">Encuesta asociada</label>
+  <div class="box has-background-light is-flex is-justify-content-space-between is-align-items-center">
+    <div>
+      <span class="icon mr-2"><i class="fas fa-poll"></i></span>
+      {{ survey.name }}
+      <span class="has-text-grey is-size-7">({{ survey.uploadDate }})</span>
+    </div>
+    <div class="buttons">
+      <button type="button" class="button is-danger is-small" (click)="deleteSurvey()">
+        Borrar
+      </button>
+    </div>
+  </div>
+</div>

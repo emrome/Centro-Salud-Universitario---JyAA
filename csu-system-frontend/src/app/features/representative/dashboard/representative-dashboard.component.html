@@ -1,0 +1,17 @@
+<section class="section">
+  <div class="container">
+    <h1 class="title">Panel de Representante</h1>
+    <p class="subtitle">Accedé a tus funcionalidades</p>
+
+    <div class="columns is-multiline">
+      <div class="column is-one-third" *ngFor="let card of cards">
+        <div class="card" (click)="goTo(card.link)" style="cursor: pointer">
+          <div class="card-content">
+            <p class="title is-5">{{ card.title }}</p>
+            <p class="subtitle is-6">{{ card.subtitle }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

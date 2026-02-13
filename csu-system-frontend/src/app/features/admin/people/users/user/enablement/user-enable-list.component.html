@@ -1,0 +1,57 @@
+<section class="section">
+  <div class="container">
+    <h1 class="title">Habilitación de usuarios</h1>
+
+    <div *ngIf="loading">Cargando usuarios...</div>
+    <div *ngIf="errorMessage" class="notification is-danger">{{ errorMessage }}</div>
+
+    <div *ngIf="!loading && (rows?.length ?? 0) === 0" class="has-text-grey">
+      No hay usuarios pendientes de habilitación.
+    </div>
+
+    <div *ngIf="!loading && (rows?.length ?? 0) > 0" class="table-container">
+      <table class="table is-fullwidth is-striped">
+        <thead>
+        <tr>
+          <th>Tipo</th>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Detalle</th>
+          <th class="has-text-right">Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let r of rows; trackBy: rowKey">
+          <td>
+            <span class="tag is-info" *ngIf="r.type === 'ADMIN'">Admin</span>
+            <span class="tag is-success" *ngIf="r.type === 'HEALTH'">Salud</span>
+            <span class="tag is-warning" *ngIf="r.type === 'REP'">Representante</span>
+          </td>
+          <td>{{ r.lastName }}, {{ r.firstName }}</td>
+          <td>{{ r.email }}</td>
+          <td>
+            <ng-container *ngIf="r.type === 'REP'">
+              Org.: <strong>{{ r.organizationName || '—' }}</strong>
+            </ng-container>
+            <ng-container *ngIf="r.type === 'HEALTH'">
+              Esp.: <strong>{{ getSpecialtyLabel(r.specialty) }}</strong>
+              <span class="ml-2">Mat.: <strong>{{ r.license || '—' }}</strong></span>
+            </ng-container>
+            <ng-container *ngIf="r.type === 'ADMIN'">
+              Pos.: <strong>{{ r.positionInCSU || '—' }}</strong>
+            </ng-container>
+          </td>
+          <td class="has-text-right">
+            <button class="button is-primary is-small" (click)="enable(r)" [disabled]="saving[rowKey(0, r)]">
+              Habilitar
+            </button>
+            <button class="button is-danger is-small ml-2" (click)="delete(r)" [disabled]="saving[rowKey(0, r)]">
+              Eliminar
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

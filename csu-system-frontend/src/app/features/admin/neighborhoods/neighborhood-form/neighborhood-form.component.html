@@ -1,0 +1,43 @@
+<section class="section">
+  <div class="container">
+    <h1 class="title">{{ isEdit ? 'Editar barrio' : 'Nuevo barrio' }}</h1>
+
+    <div *ngIf="error" class="notification is-danger">{{ error }}</div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <app-entity-basic-fields [formGroup]="form"></app-entity-basic-fields>
+      <hr class="my-4">
+
+      <app-map-polygon-picker
+        [formArray]="geolocation"
+        [height]="'420px'">
+      </app-map-polygon-picker>
+
+      <div *ngIf="isEdit" class="mt-6">
+        <h2 class="subtitle is-5">Zonas del barrio</h2>
+        <div class="is-flex is-justify-content-space-between is-align-items-center mb-3">
+          <p class="has-text-grey">Listado de zonas asociadas</p>
+          <button type="button" class="button is-success is-small" (click)="goToCreateZone()">+ Nueva zona</button>
+        </div>
+
+        @if(zones.length != 0){
+          <p class="has-text-grey mt-3">Zonas:</p>
+          <app-zone-list
+            [zones]="zones"
+            [neighborhoodName]="form.value.name"
+            (onDelete)="deleteZone($event)">
+          </app-zone-list>
+        }
+      </div>
+
+      <div class="field mt-4">
+        <div class="buttons">
+          <button type="submit" class="button is-primary" [disabled]="form.invalid">
+            {{ isEdit ? 'Actualizar' : 'Crear' }}
+          </button>
+          <button type="button" class="button is-danger" (click)="cancel()">Cancelar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

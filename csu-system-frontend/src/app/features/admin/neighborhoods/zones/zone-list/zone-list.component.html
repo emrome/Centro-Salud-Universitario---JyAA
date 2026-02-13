@@ -1,0 +1,24 @@
+<div class="zone-list">
+  <div class="zone-card" *ngFor="let z of zones">
+    <div class="zone-card-header">
+      <strong>{{ z.name }}</strong>
+      <div class="buttons">
+        <button class="button is-info is-small" (click)="editZone(z.id!)">Editar</button>
+        <button type="button" class="button is-danger is-small" (click)="deleteZone(z.id!)">Borrar</button>
+      </div>
+    </div>
+    @if(z.description){
+      <p class="has-text-grey mt-3">Descripción:</p>
+      <div class="zone-description">{{ z.description }}</div>
+    }
+    @if (z.coordinates && z.coordinates.length > 3) {
+      <app-map-polygon-preview
+        [coordinates]="z.coordinates"
+        height="160px">
+      </app-map-polygon-preview>
+    } @else {
+      <p class="has-text-grey mt-3">No hay coordenadas definidas.</p>
+    }
+  </div>
+</div>
+

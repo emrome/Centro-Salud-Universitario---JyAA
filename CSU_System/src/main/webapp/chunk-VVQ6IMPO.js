@@ -1,0 +1,1 @@
+var l=[{value:"CLINIC",label:"Cl\xEDnica"},{value:"PSYCHOLOGY",label:"Psicolog\xEDa"},{value:"NURSING",label:"Enfermer\xEDa"},{value:"SOCIAL_WORK",label:"Trabajo social"},{value:"NUTRITION",label:"Nutrici\xF3n"}];export{l as a};

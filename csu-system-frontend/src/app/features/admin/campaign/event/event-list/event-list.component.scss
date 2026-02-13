@@ -1,0 +1,11 @@
+.events-scroll {
+  max-height: calc(100vh - 300px);
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  margin-top: 1rem;
+  border: 1px solid #dbdbdb;
+  border-radius: 6px;
+}
+.box:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}

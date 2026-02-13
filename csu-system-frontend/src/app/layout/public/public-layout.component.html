@@ -1,0 +1,26 @@
+<div class="wrapper">
+  <ng-container *ngIf="showSidebar">
+    <div class="columns">
+      <aside class="sidebar">
+        <app-sidebar *ngIf="role === 'Admin'"></app-sidebar>
+        <app-health-staff-sidebar *ngIf="role === 'HealthStaff'"></app-health-staff-sidebar>
+        <app-representative-sidebar *ngIf="role === 'SocialOrgRepresentative'"></app-representative-sidebar>
+      </aside>
+      <div class="main">
+        <app-header></app-header>
+        <main class="content">
+          <router-outlet></router-outlet>
+        </main>
+        <app-footer></app-footer>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="!showSidebar">
+    <app-header></app-header>
+    <main class="section">
+      <router-outlet></router-outlet>
+    </main>
+    <app-footer></app-footer>
+  </ng-container>
+</div>

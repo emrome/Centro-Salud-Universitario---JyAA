@@ -1,0 +1,28 @@
+.request-card {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 1.25rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.06);
+}
+.request-card.is-resolved { border-left: 4px solid #48c78e; }
+.request-card.is-rejected { border-left: 4px solid #f14668; }
+
+.request-meta .request-id {
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-bottom: .25rem;
+}
+
+.request-actions .buttons .button + .button { margin-left: .5rem; }
+
+.tabs-spaced { margin-bottom: 1.25rem; }
+
+@media (max-width: 1023px) {
+  .request-card { grid-template-columns: 1fr; }
+  .resolved-actions { display: flex; align-items: center; justify-content: flex-start; }
+}

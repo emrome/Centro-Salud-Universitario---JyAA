@@ -1,0 +1,1 @@
+import"./chunk-FDERIQAA.js";var t=[{path:"",loadComponent:()=>import("./chunk-YFE23ZJK.js").then(o=>o.SurveyorListComponent)},{path:"new",loadComponent:()=>import("./chunk-3OOP2BVX.js").then(o=>o.SurveyorFormComponent)},{path:":id",loadComponent:()=>import("./chunk-3OOP2BVX.js").then(o=>o.SurveyorFormComponent)}];export{t as surveyorRoutes};

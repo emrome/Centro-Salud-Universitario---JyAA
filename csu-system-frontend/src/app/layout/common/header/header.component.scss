@@ -1,0 +1,85 @@
+@use '../../../../assets/styles/variables' as *;
+@use "sass:color";
+
+.header {
+  background-color: $secondary;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  .header-left {
+    display: flex;
+    align-items: center;
+
+    .logo {
+      height: 56px;
+      max-height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+
+    .user-placeholder {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      .user-avatar {
+        font-size: 1.5rem;
+        color: $text-inverse;
+        background-color: $link;
+        border-radius: 50%;
+        display: flex;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .user-name {
+        font-size: 1rem;
+        font-weight: 500;
+        color: $text-inverse;
+        margin-right: 1rem;
+        text-transform: uppercase;
+      }
+    }
+
+    .not-authenticated {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+  }
+
+  .button {
+    background-color: $link;
+    color: $text-inverse;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: color.adjust($accent, $lightness: -10%);
+    }
+  }
+
+  .button {
+    background-color: $link;
+    color: $text-inverse;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: color.adjust($accent, $lightness: -10%);
+    }
+  }
+}

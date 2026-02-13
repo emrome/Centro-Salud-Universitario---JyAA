@@ -1,0 +1,78 @@
+<section class="section">
+  <div class="container">
+    <h1 class="title">Organizaciones</h1>
+
+    <button class="button is-primary mb-4" (click)="goToNewOrganization()">+ Agregar organización</button>
+
+    <div *ngIf="loading">Cargando organizaciones...</div>
+    <div *ngIf="error" class="notification is-danger">{{ error }}</div>
+
+    <div *ngIf="!loading && organizations.length === 0" class="has-text-grey">
+      No se encontraron organizaciones.
+    </div>
+
+    <div class="box" *ngFor="let o of organizations">
+      <div class="is-flex is-justify-content-space-between is-align-items-center mb-2">
+        <strong>{{ o.name }}</strong>
+        <div class="buttons">
+          <button
+            type="button"
+            class="button is-success is-small"
+            (click)="toggleRepresentatives(o.id!)">
+            Representantes
+            <span class="tag is-light ml-2">
+              @if (loadingRepresentatives[o.id!]) {
+                …
+              } @else {
+                {{ getRepresentativeCount(o.id!) }}
+              }
+            </span>
+          </button>
+          <button type="button" class="button is-info is-small" (click)="goToEditOrganization(o.id!)">Editar</button>
+          <button type="button" class="button is-danger is-small" (click)="deleteOrganization(o.id!)">Borrar</button>
+        </div>
+      </div>
+
+      <p class="has-text-grey">
+        Actividad: {{ getActivityLabel(o.mainActivity) }} |
+        Barrio: {{ neighborhoods[o.neighborhoodId!] || '—' }}
+      </p>
+      <p class="has-text-grey">Dirección: {{ o.address || '—' }}</p>
+
+      @if (expandedOrganizationId === o.id!) {
+        <div class="mt-3">
+          <div class="is-flex is-justify-content-space-between is-align-items-center">
+            <p class="has-text-grey">Representantes:</p>
+            <div class="buttons">
+              <button
+                class="button is-primary is-small"
+                (click)="goToNewRepresentative(o.id!)">
+                + Nuevo representante
+              </button>
+            </div>
+          </div>
+
+          @if (loadingRepresentatives[o.id!]) {
+            <p class="has-text-grey">Cargando representantes...</p>
+          } @else if (representatives[o.id!] && representatives[o.id!].length) {
+            <ul class="mt-2">
+              <li class="is-flex is-justify-content-space-between is-align-items-center"
+                  *ngFor="let r of representatives[o.id!]; trackBy: trackRep">
+                <div>
+                  <span class="has-text-weight-semibold">{{ r.firstName }} {{ r.lastName }}</span>
+                  <span class="has-text-grey"> — {{ r.email }}</span>
+                </div>
+                <div class="buttons">
+                  <button class="button is-info is-small" (click)="goToEditRepresentative(r.id!)">Editar</button>
+                  <button class="button is-danger is-small" (click)="deleteRepresentative(r.id!, o.id!)">Borrar</button>
+                </div>
+              </li>
+            </ul>
+          } @else {
+            <p class="has-text-grey">No hay representantes asociados.</p>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</section>

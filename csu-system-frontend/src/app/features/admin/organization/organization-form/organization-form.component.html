@@ -1,0 +1,58 @@
+<section class="section">
+  <div class="container">
+    <h1 class="title">{{ isEdit ? 'Editar organización' : 'Nueva organización' }}</h1>
+
+    <div *ngIf="error" class="notification is-danger">{{ error }}</div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="field">
+        <label class="label">Nombre</label>
+        <div class="control">
+          <input class="input" type="text" formControlName="name" />
+        </div>
+        <p class="help is-danger" *ngIf="form.get('name')?.invalid && form.get('name')?.touched">
+          Requerido
+        </p>
+      </div>
+
+      <div class="field">
+        <label class="label">Dirección</label>
+        <div class="control">
+          <input class="input" type="text" formControlName="address" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Actividad principal</label>
+        <div class="select is-fullwidth">
+          <select formControlName="mainActivity">
+            <option [ngValue]="null">- Seleccionar -</option>
+            <option *ngFor="let a of activities" [ngValue]="a.value">{{ a.label }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Barrio</label>
+        <div class="select is-fullwidth">
+          <select formControlName="neighborhoodId">
+            <option [ngValue]="null" disabled>Seleccionar barrio</option>
+            <option *ngFor="let n of neighborhoods" [ngValue]="n.id">{{ n.name }}</option>
+          </select>
+        </div>
+        <p class="help is-danger" *ngIf="form.get('neighborhoodId')?.invalid && form.get('neighborhoodId')?.touched">
+          Requerido
+        </p>
+      </div>
+
+      <div class="field mt-4">
+        <div class="buttons">
+          <button type="submit" class="button is-primary" [disabled]="form.invalid">
+            {{ isEdit ? 'Actualizar' : 'Crear' }}
+          </button>
+          <button type="button" class="button is-danger" (click)="cancel()">Cancelar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

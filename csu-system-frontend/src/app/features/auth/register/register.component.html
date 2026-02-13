@@ -1,0 +1,194 @@
+<section class="section">
+  <div class="container">
+    <div class="box" style="max-width: 600px; margin: auto;">
+      <h1 class="title has-text-centered">Registro de usuario</h1>
+
+      <div *ngIf="error" class="notification is-danger is-light">
+        <button class="delete" (click)="error = null"></button>
+        {{ error }}
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <div class="field">
+          <label class="label">Tipo de usuario</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select
+                formControlName="userType">
+                <option [ngValue]="null" disabled>Seleccioná un tipo</option>
+                <option value="HealthStaff">Personal de Salud</option>
+                <option value="SocialOrgRepresentative">Referente de Organización Social</option>
+              </select>
+            </div>
+          </div>
+          <p class="help is-danger" *ngFor="let error of getErrors('userType')">{{ error }}</p>
+        </div>
+
+        <div class="field">
+          <label class="label">Nombre</label>
+          <input
+            class="input"
+            placeholder="Ej: Ana"
+            formControlName="firstName"
+            [class.is-danger]="submitted && form.get('firstName')?.invalid"
+            autocomplete="given-name"/>
+          <p class="help is-danger" *ngFor="let error of getErrors('firstName')">{{ error }}</p>
+        </div>
+
+        <div class="field">
+          <label class="label">Apellido</label>
+          <input
+            class="input"
+            placeholder="Ej: Romero"
+            formControlName="lastName"
+            [class.is-danger]="submitted && form.get('lastName')?.invalid"
+            autocomplete="family-name"
+          />
+          <p class="help is-danger" *ngFor="let error of getErrors('lastName')">{{ error }}</p>
+        </div>
+
+        <div class="field">
+          <label class="label">Fecha de nacimiento</label>
+          <input
+            class="input"
+            type="date"
+            formControlName="birthDate"
+            [attr.max]="maxBirthDate"
+            [class.is-danger]="submitted && form.get('birthDate')?.invalid"
+          />
+          <p class="help is-danger" *ngFor="let error of getErrors('birthDate')">{{ error }}</p>
+        </div>
+
+        <div class="field">
+          <label class="label">Email</label>
+          <input
+            class="input"
+            type="email"
+            placeholder="Ej: ana@mail.com"
+            formControlName="email"
+            [class.is-danger]="submitted && form.get('email')?.invalid"
+            autocomplete="email"
+            autocapitalize="off"
+          />
+          <p class="help is-danger" *ngFor="let error of getErrors('email')">{{ error }}</p>
+        </div>
+
+        <div class="field">
+          <label class="label">Contraseña</label>
+
+          <div class="control has-icons-right">
+            <input
+              class="input"
+              [type]="passwordVisible ? 'text' : 'password'"
+              placeholder="Ej: Seguridad2024!"
+              formControlName="password"
+              [class.is-danger]="submitted && form.get('password')?.invalid"
+              autocomplete="new-password"
+            />
+
+            <span
+              class="icon is-small is-right"
+              role="button"
+              tabindex="0"
+              (click)="togglePassword()"
+              (keydown.enter)="togglePassword()"
+              (keydown.space)="togglePassword()"
+              [attr.aria-label]="passwordVisible ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+              style="cursor:pointer; pointer-events:auto"
+            >
+              <svg *ngIf="!passwordVisible" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                <path fill="currentColor" d="M12 5c5 0 9.27 3.11 11 7-1.73 3.89-6 7-11 7S2.73 15.89 1 12C2.73 8.11 7 5 12 5zm0 2C8.14 7 4.79 9.29 3.35 12 4.79 14.71 8.14 17 12 17s7.21-2.29 8.65-5C19.21 9.29 15.86 7 12 7zm0 2a3 3 0 110 6 3 3 0 010-6z"/>
+              </svg>
+              <svg *ngIf="passwordVisible" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                <path fill="currentColor" d="M2 5.27L3.28 4l16.97 16.97-1.27 1.27-2.56-2.56A12.1 12.1 0 0112 19c-5 0-9.27-3.11-11-7a12.9 12.9 0 013.74-4.67L2 5.27zM7.11 7.38A10.2 10.2 0 004.35 12c1.44 2.71 4.79 5 7.65 5 1.36 0 2.64-.3 3.79-.85l-1.67-1.67c-.33.13-.68.2-1.05.2a3 3 0 01-3-3c0-.37.07-.72.2-1.05L7.11 7.38zM12 7c.9 0 1.76.16 2.55.46l-1.54 1.54A2.98 2.98 0 0012 9a3 3 0 00-3 3c0 .46.11.89.3 1.27l-1.5-1.5A10.2 10.2 0 0112 7zm7.65 5c-.49.91-1.13 1.75-1.9 2.5l-1.42-1.42A5 5 0 0017 12a5 5 0 00-5-5c-.38 0-.75.04-1.1.12L9.24 5.45A12.3 12.3 0 0112 5c5 0 9.27 3.11 11 7-.4.9-.92 1.74-1.52 2.5l-1.83-1.83z"/>
+              </svg>
+            </span>
+          </div>
+
+          <p class="help is-danger" *ngFor="let error of getErrors('password')">{{ error }}</p>
+        </div>
+
+        <div *ngIf="userType === 'HealthStaff'">
+          <div class="field">
+            <label class="label">Especialidad</label>
+            <div class="control">
+              <div class="select is-fullwidth">
+                <select
+                  formControlName="specialty"
+                  [class.is-danger]="submitted && form.get('specialty')?.invalid">
+                  <option [ngValue]="null" disabled>Seleccioná una especialidad</option>
+                  <option *ngFor="let spec of specialties" [value]="spec.value">{{ spec.label }}</option>
+                </select>
+              </div>
+            </div>
+            <p class="help is-danger" *ngFor="let error of getErrors('specialty')">{{ error }}</p>
+          </div>
+
+          <div class="field">
+            <label class="label">Matrícula</label>
+            <input
+              class="input"
+              placeholder="Ej: MP123456"
+              formControlName="license"
+              [class.is-danger]="submitted && form.get('license')?.invalid"
+            />
+            <p class="help is-danger" *ngFor="let error of getErrors('license')">{{ error }}</p>
+          </div>
+        </div>
+
+        <!-- Representative -->
+        <div *ngIf="userType === 'SocialOrgRepresentative'" class="field">
+          <label class="label">Organización</label>
+
+          <div class="control" *ngIf="!loadingOrganizations; else loadingOrgsTpl">
+            <div class="select is-fullwidth">
+              <select
+                formControlName="organizationId"
+                [class.is-danger]="(submitted || form.get('organizationId')?.touched) && form.get('organizationId')?.invalid">
+                <option [ngValue]="null" disabled>Seleccionar organización</option>
+                <option *ngFor="let o of organizations" [ngValue]="o.id">{{ o.name }}</option>
+              </select>
+            </div>
+          </div>
+
+          <ng-template #loadingOrgsTpl>
+            <p class="has-text-grey">Cargando organizaciones...</p>
+          </ng-template>
+
+          <p
+            class="help is-danger"
+            *ngIf="(submitted || form.get('organizationId')?.touched) && form.get('organizationId')?.invalid"
+          >
+            Seleccioná una organización
+          </p>
+        </div>
+
+        <div class="field mt-4">
+          <button
+            class="button is-primary is-fullwidth"
+            [disabled]="form.invalid || isSubmitting"
+            [class.is-loading]="isSubmitting"
+            type="submit"
+          >
+            Registrarse
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<div class="modal" [ngClass]="{ 'is-active': success }">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Registro exitoso</p>
+    </header>
+    <section class="modal-card-body">
+      <p>Tu usuario fue registrado correctamente. Deberás esperar a ser habilitado por un administrador.</p>
+    </section>
+    <footer class="modal-card-foot">
+      <button class="button is-success" (click)="closeModal()">Aceptar</button>
+    </footer>
+  </div>
+</div>

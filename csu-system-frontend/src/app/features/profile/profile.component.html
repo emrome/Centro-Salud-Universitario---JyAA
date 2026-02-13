@@ -1,0 +1,341 @@
+<section class="section">
+  <div class="container">
+    <h1 class="title">Mi perfil</h1>
+
+    <div *ngIf="loading">Cargando...</div>
+
+    <div class="box" *ngIf="profileForm">
+      <h2 class="subtitle">Datos personales</h2>
+      <form [formGroup]="profileForm" (ngSubmit)="submitProfile()" novalidate>
+        <div class="columns">
+          <div class="column">
+            <div class="field">
+              <label class="label" for="firstName">Nombre</label>
+              <div class="control">
+                <input
+                  id="firstName"
+                  class="input"
+                  formControlName="firstName"
+                  autocomplete="given-name"
+                  [ngClass]="{ 'is-danger': profileForm.get('firstName')?.invalid && (profileForm.get('firstName')?.touched || profileForm.get('firstName')?.dirty) }"
+                  [attr.aria-invalid]="profileForm.get('firstName')?.invalid && (profileForm.get('firstName')?.touched || profileForm.get('firstName')?.dirty) ? 'true' : 'false'"
+                />
+              </div>
+              <p class="help is-danger" *ngIf="profileForm.get('firstName')?.errors?.['required'] && (profileForm.get('firstName')?.touched || profileForm.get('firstName')?.dirty)">
+                Este campo es obligatorio
+              </p>
+              <p class="help is-danger" *ngIf="profileForm.get('firstName')?.errors?.['minlength'] && (profileForm.get('firstName')?.touched || profileForm.get('firstName')?.dirty)">
+                Mínimo 2 caracteres
+              </p>
+            </div>
+          </div>
+
+          <div class="column">
+            <div class="field">
+              <label class="label" for="lastName">Apellido</label>
+              <div class="control">
+                <input
+                  id="lastName"
+                  class="input"
+                  formControlName="lastName"
+                  autocomplete="family-name"
+                  [ngClass]="{ 'is-danger': profileForm.get('lastName')?.invalid && (profileForm.get('lastName')?.touched || profileForm.get('lastName')?.dirty) }"
+                  [attr.aria-invalid]="profileForm.get('lastName')?.invalid && (profileForm.get('lastName')?.touched || profileForm.get('lastName')?.dirty) ? 'true' : 'false'"
+                />
+              </div>
+              <p class="help is-danger" *ngIf="profileForm.get('lastName')?.errors?.['required'] && (profileForm.get('lastName')?.touched || profileForm.get('lastName')?.dirty)">
+                Este campo es obligatorio
+              </p>
+              <p class="help is-danger" *ngIf="profileForm.get('lastName')?.errors?.['minlength'] && (profileForm.get('lastName')?.touched || profileForm.get('lastName')?.dirty)">
+                Mínimo 2 caracteres
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="columns">
+          <div class="column">
+            <div class="field">
+              <label class="label" for="birthDate">Fecha de nacimiento</label>
+              <div class="control">
+                <input
+                  id="birthDate"
+                  type="date"
+                  class="input"
+                  formControlName="birthDate"
+                  [attr.max]="maxBirthDate"
+                  [ngClass]="{ 'is-danger': profileForm.get('birthDate')?.invalid && (profileForm.get('birthDate')?.touched || profileForm.get('birthDate')?.dirty) }"
+                  [attr.aria-invalid]="profileForm.get('birthDate')?.invalid && (profileForm.get('birthDate')?.touched || profileForm.get('birthDate')?.dirty) ? 'true' : 'false'"
+                />
+              </div>
+              <p class="help is-danger" *ngIf="profileForm.get('birthDate')?.errors?.['required'] && (profileForm.get('birthDate')?.touched || profileForm.get('birthDate')?.dirty)">
+                Este campo es obligatorio
+              </p>
+              <p class="help is-danger" *ngIf="profileForm.get('birthDate')?.errors?.['underAge'] && (profileForm.get('birthDate')?.touched || profileForm.get('birthDate')?.dirty)">
+                Debés ser mayor de 18 años
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="columns" *ngIf="role === 'HEALTHSTAFF'">
+          <div class="column">
+            <div class="field">
+              <label class="label" for="license">Matrícula</label>
+              <div class="control">
+                <input id="license" class="input" formControlName="license" />
+              </div>
+            </div>
+          </div>
+
+          <div class="column">
+            <div class="field">
+              <label class="label" for="specialty">Especialidad</label>
+              <div class="control">
+                <input id="specialty" class="input" formControlName="specialty" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="columns" *ngIf="role === 'REPRESENTATIVE'">
+          <div class="column">
+            <div class="field">
+              <label class="label" for="organizationName">Organización</label>
+              <div class="control">
+                <input id="organizationName" class="input" formControlName="organizationName" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="columns" *ngIf="role === 'ADMIN'">
+          <div class="column">
+            <div class="field">
+              <label class="label" for="positionInCSU">Cargo en CSU</label>
+              <div class="control">
+                <input
+                  id="positionInCSU"
+                  class="input"
+                  formControlName="positionInCSU"
+                  [ngClass]="{ 'is-danger': profileForm.get('positionInCSU')?.invalid && (profileForm.get('positionInCSU')?.touched || profileForm.get('positionInCSU')?.dirty) }"
+                  [attr.aria-invalid]="profileForm.get('positionInCSU')?.invalid && (profileForm.get('positionInCSU')?.touched || profileForm.get('positionInCSU')?.dirty) ? 'true' : 'false'"
+                />
+              </div>
+              <p class="help is-danger" *ngIf="profileForm.get('positionInCSU')?.errors?.['required'] && (profileForm.get('positionInCSU')?.touched || profileForm.get('positionInCSU')?.dirty)">
+                Este campo es obligatorio
+              </p>
+              <p class="help is-danger" *ngIf="profileForm.get('positionInCSU')?.errors?.['minlength'] && (profileForm.get('positionInCSU')?.touched || profileForm.get('positionInCSU')?.dirty)">
+                Mínimo 2 caracteres
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="columns">
+          <div class="column">
+            <div class="field">
+              <label class="label" for="email">Email</label>
+              <div class="control">
+                <input id="email" class="input" formControlName="email" autocomplete="email" readonly />
+              </div>
+            </div>
+          </div>
+
+          <div class="column">
+            <div class="field">
+              <label class="label" for="registrationDate">Fecha registro</label>
+              <div class="control">
+                <input id="registrationDate" class="input" formControlName="registrationDate" readonly />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field is-grouped is-align-items-center">
+          <div class="control">
+            <button class="button is-primary" type="submit" [disabled]="saving || profileForm.invalid" [class.is-loading]="saving">
+              Guardar
+            </button>
+          </div>
+          <div class="control" *ngIf="error">
+            <span class="tag is-danger">{{ error }}</span>
+          </div>
+          <div class="control" *ngIf="success">
+            <span class="tag is-success">Datos actualizados correctamente</span>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="box" *ngIf="passwordForm">
+      <h2 class="subtitle">Cambiar contraseña</h2>
+
+      <form [formGroup]="passwordForm" (ngSubmit)="submitPassword()" novalidate>
+        <div class="columns">
+          <div class="column">
+            <div class="field">
+              <label class="label" for="oldPassword">Contraseña actual</label>
+              <div class="control has-icons-right">
+                <input
+                  id="oldPassword"
+                  class="input"
+                  [type]="showOldPwd ? 'text' : 'password'"
+                  formControlName="oldPassword"
+                  autocomplete="current-password"
+                  [ngClass]="{
+                'is-danger':
+                  passwordForm.get('oldPassword')?.invalid &&
+                  (passwordForm.get('oldPassword')?.touched || passwordForm.get('oldPassword')?.dirty)
+              }"
+                  [attr.aria-invalid]="
+                passwordForm.get('oldPassword')?.invalid &&
+                (passwordForm.get('oldPassword')?.touched || passwordForm.get('oldPassword')?.dirty)
+                  ? 'true' : 'false'
+              "
+                />
+                <span class="icon is-small is-right"
+                      (click)="showOldPwd = !showOldPwd"
+                      style="cursor:pointer; pointer-events:auto">
+                  <svg *ngIf="!showOldPwd" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 5c5 0 9.27 3.11 11 7-1.73 3.89-6 7-11 7S2.73 15.89 1 12C2.73 8.11 7 5 12 5zm0 2C8.14 7 4.79 9.29 3.35 12 4.79 14.71 8.14 17 12 17s7.21-2.29 8.65-5C19.21 9.29 15.86 7 12 7zm0 2a3 3 0 110 6 3 3 0 010-6z"/></svg>
+                  <svg *ngIf="showOldPwd" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M2 5.27L3.28 4l16.97 16.97-1.27 1.27-2.56-2.56A12.1 12.1 0 0112 19c-5 0-9.27-3.11-11-7a12.9 12.9 0 013.74-4.67L2 5.27zM7.11 7.38A10.2 10.2 0 004.35 12c1.44 2.71 4.79 5 7.65 5 1.36 0 2.64-.3 3.79-.85l-1.67-1.67c-.33.13-.68.2-1.05.2a3 3 0 01-3-3c0-.37.07-.72.2-1.05L7.11 7.38zM12 7c.9 0 1.76.16 2.55.46l-1.54 1.54A2.98 2.98 0 0012 9a3 3 0 00-3 3c0 .46.11.89.3 1.27l-1.5-1.5A10.2 10.2 0 0112 7zm7.65 5c-.49.91-1.13 1.75-1.9 2.5l-1.42-1.42A5 5 0 0017 12a5 5 0 00-5-5c-.38 0-.75.04-1.1.12L9.24 5.45A12.3 12.3 0 0112 5c5 0 9.27 3.11 11 7-.4.9-.92 1.74-1.52 2.5l-1.83-1.83z"/></svg>
+                </span>
+              </div>
+
+              <div class="stack-helps stack-helps--old">
+                <p class="help is-danger"
+                   *ngIf="passwordForm.get('oldPassword')?.hasError('required') &&
+                      (passwordForm.get('oldPassword')?.touched || passwordForm.get('oldPassword')?.dirty)">
+                  Ingresá la contraseña actual
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="column">
+            <div class="field">
+              <label class="label" for="newPassword">Nueva contraseña</label>
+              <div class="control has-icons-right">
+                <input
+                  id="newPassword"
+                  class="input"
+                  [type]="showNewPwd ? 'text' : 'password'"
+                  formControlName="newPassword"
+                  autocomplete="new-password"
+                  [ngClass]="{
+                'is-danger':
+                  (passwordForm.get('newPassword')?.invalid &&
+                   (passwordForm.get('newPassword')?.touched || passwordForm.get('newPassword')?.dirty)) ||
+                  (passwordForm.hasError('sameAsOld') && passwordForm.get('newPassword')?.touched)
+              }"
+                  [attr.aria-invalid]="
+                (passwordForm.get('newPassword')?.invalid &&
+                 (passwordForm.get('newPassword')?.touched || passwordForm.get('newPassword')?.dirty)) ||
+                (passwordForm.hasError('sameAsOld') && passwordForm.get('newPassword')?.touched)
+                  ? 'true' : 'false'
+              "
+                />
+                <span class="icon is-small is-right"
+                      (click)="showNewPwd = !showNewPwd"
+                      style="cursor:pointer; pointer-events:auto">
+                  <svg *ngIf="!showNewPwd" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 5c5 0 9.27 3.11 11 7-1.73 3.89-6 7-11 7S2.73 15.89 1 12C2.73 8.11 7 5 12 5zm0 2C8.14 7 4.79 9.29 3.35 12 4.79 14.71 8.14 17 12 17s7.21-2.29 8.65-5C19.21 9.29 15.86 7 12 7zm0 2a3 3 0 110 6 3 3 0 010-6z"/></svg>
+                  <svg *ngIf="showNewPwd" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M2 5.27L3.28 4l16.97 16.97-1.27 1.27-2.56-2.56A12.1 12.1 0 0112 19c-5 0-9.27-3.11-11-7a12.9 12.9 0 013.74-4.67L2 5.27zM7.11 7.38A10.2 10.2 0 004.35 12c1.44 2.71 4.79 5 7.65 5 1.36 0 2.64-.3 3.79-.85l-1.67-1.67c-.33.13-.68.2-1.05.2a3 3 0 01-3-3c0-.37.07-.72.2-1.05L7.11 7.38zM12 7c.9 0 1.76.16 2.55.46l-1.54 1.54A2.98 2.98 0 0012 9a3 3 0 00-3 3c0 .46.11.89.3 1.27l-1.5-1.5A10.2 10.2 0 0112 7zm7.65 5c-.49.91-1.13 1.75-1.9 2.5l-1.42-1.42A5 5 0 0017 12a5 5 0 00-5-5c-.38 0-.75.04-1.1.12L9.24 5.45A12.3 12.3 0 0112 5c5 0 9.27 3.11 11 7-.4.9-.92 1.74-1.52 2.5l-1.83-1.83z"/></svg>
+                </span>
+              </div>
+
+              <div class="stack-helps stack-helps--new">
+                <p class="help is-danger"
+                   *ngIf="passwordForm.get('newPassword')?.hasError('required') &&
+                      (passwordForm.get('newPassword')?.touched || passwordForm.get('newPassword')?.dirty)">
+                  Ingresá la nueva contraseña
+                </p>
+                <p class="help is-danger"
+                   *ngIf="passwordForm.get('newPassword')?.hasError('minlength') &&
+                      (passwordForm.get('newPassword')?.touched || passwordForm.get('newPassword')?.dirty)">
+                  La nueva contraseña debe tener al menos 8 caracteres
+                </p>
+                <p class="help is-danger"
+                   *ngIf="passwordForm.get('newPassword')?.hasError('weakPassword') &&
+                      (passwordForm.get('newPassword')?.touched || passwordForm.get('newPassword')?.dirty)">
+                  Debe incluir mayúscula, minúscula, número y símbolo
+                </p>
+                <p class="help is-danger"
+                   *ngIf="passwordForm.get('newPassword')?.hasError('leadingTrailingSpace') &&
+                      (passwordForm.get('newPassword')?.touched || passwordForm.get('newPassword')?.dirty)">
+                  No debe empezar ni terminar con espacios
+                </p>
+                <p class="help is-danger"
+                   *ngIf="passwordForm.hasError('sameAsOld') && passwordForm.get('newPassword')?.touched">
+                  La nueva contraseña debe ser distinta a la actual
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="column">
+            <div class="field">
+              <label class="label" for="confirmNewPassword">Confirmar nueva</label>
+              <div class="control has-icons-right">
+                <input
+                  id="confirmNewPassword"
+                  class="input"
+                  [type]="showConfirmPwd ? 'text' : 'password'"
+                  formControlName="confirmNewPassword"
+                  autocomplete="new-password"
+                  [ngClass]="{
+                'is-danger':
+                  (passwordForm.get('confirmNewPassword')?.invalid &&
+                   (passwordForm.get('confirmNewPassword')?.touched || passwordForm.get('confirmNewPassword')?.dirty)) ||
+                  (passwordForm.hasError('passwordMismatch') && passwordForm.get('confirmNewPassword')?.touched)
+              }"
+                  [attr.aria-invalid]="
+                (passwordForm.get('confirmNewPassword')?.invalid &&
+                 (passwordForm.get('confirmNewPassword')?.touched || passwordForm.get('confirmNewPassword')?.dirty)) ||
+                (passwordForm.hasError('passwordMismatch') && passwordForm.get('confirmNewPassword')?.touched)
+                  ? 'true' : 'false'
+              "
+                />
+                <span class="icon is-small is-right"
+                      (click)="showConfirmPwd = !showConfirmPwd"
+                      style="cursor:pointer; pointer-events:auto">
+                  <svg *ngIf="!showConfirmPwd" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 5c5 0 9.27 3.11 11 7-1.73 3.89-6 7-11 7S2.73 15.89 1 12C2.73 8.11 7 5 12 5zm0 2C8.14 7 4.79 9.29 3.35 12 4.79 14.71 8.14 17 12 17s7.21-2.29 8.65-5C19.21 9.29 15.86 7 12 7zm0 2a3 3 0 110 6 3 3 0 010-6z"/></svg>
+                  <svg *ngIf="showConfirmPwd" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M2 5.27L3.28 4l16.97 16.97-1.27 1.27-2.56-2.56A12.1 12.1 0 0112 19c-5 0-9.27-3.11-11-7a12.9 12.9 0 013.74-4.67L2 5.27zM7.11 7.38A10.2 10.2 0 004.35 12c1.44 2.71 4.79 5 7.65 5 1.36 0 2.64-.3 3.79-.85l-1.67-1.67c-.33.13-.68.2-1.05.2a3 3 0 01-3-3c0-.37.07-.72.2-1.05L7.11 7.38zM12 7c.9 0 1.76.16 2.55.46l-1.54 1.54A2.98 2.98 0 0012 9a3 3 0 00-3 3c0 .46.11.89.3 1.27l-1.5-1.5A10.2 10.2 0 0112 7zm7.65 5c-.49.91-1.13 1.75-1.9 2.5l-1.42-1.42A5 5 0 0017 12a5 5 0 00-5-5c-.38 0-.75.04-1.1.12L9.24 5.45A12.3 12.3 0 0112 5c5 0 9.27 3.11 11 7-.4.9-.92 1.74-1.52 2.5l-1.83-1.83z"/></svg>
+                </span>
+              </div>
+
+              <div class="stack-helps stack-helps--confirm">
+                <p class="help is-danger"
+                   *ngIf="passwordForm.get('confirmNewPassword')?.hasError('required') &&
+                      (passwordForm.get('confirmNewPassword')?.touched || passwordForm.get('confirmNewPassword')?.dirty)">
+                  Confirmá la nueva contraseña
+                </p>
+                <p class="help is-danger"
+                   *ngIf="passwordForm.hasError('passwordMismatch') && passwordForm.get('confirmNewPassword')?.touched">
+                  Las nuevas contraseñas no coinciden
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field is-grouped is-align-items-center">
+          <div class="control">
+            <button class="button is-link" type="submit"
+                    [disabled]="savingPwd || passwordForm.invalid"
+                    [class.is-loading]="savingPwd">
+              Cambiar
+            </button>
+          </div>
+          <div class="control" *ngIf="pwdError">
+            <span class="tag is-danger">{{ pwdError }}</span>
+          </div>
+          <div class="control" *ngIf="pwdSuccess">
+            <span class="tag is-success">Contraseña actualizada</span>
+          </div>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</section>

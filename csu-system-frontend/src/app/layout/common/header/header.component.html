@@ -1,0 +1,44 @@
+<header class="header">
+  <a class="header-left" href="/">
+    <img class="logo" src="assets/images/white-logo-unlp-text.png" alt="UNLP" />
+  </a>
+
+  <div class="header-right">
+    <ng-container *ngIf="!isPublicRoute && isAuthenticated; else notLoggedIn">
+      <div class="user-placeholder" (click)="openProfile()" style="cursor: pointer;">
+        <div class="user-avatar">
+          <i class="fas fa-user-circle"></i>
+        </div>
+
+        <ng-container *ngIf="(user$ | async) as u; else loadingName">
+          <span class="user-name">{{ u.firstName }} {{ u.lastName }}</span>
+        </ng-container>
+        <ng-template #loadingName>
+          <span class="user-name">...</span>
+        </ng-template>
+      </div>
+
+      <div class="user-actions">
+        <button class="button is-light" (click)="logout()">
+          <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
+          <span>Salir</span>
+        </button>
+      </div>
+    </ng-container>
+
+    <ng-template #notLoggedIn>
+      <ng-container *ngIf="!isAuthenticated && !isPublicRoute">
+        <div class="not-authenticated">
+          <button class="button is-primary" (click)="login()">
+            <span class="icon"><i class="fas fa-sign-in-alt"></i></span>
+            <span>Ingresar</span>
+          </button>
+          <button class="button is-primary" (click)="register()">
+            <span class="icon"><i class="fas fa-user-plus"></i></span>
+            <span>Registrarse</span>
+          </button>
+        </div>
+      </ng-container>
+    </ng-template>
+  </div>
+</header>

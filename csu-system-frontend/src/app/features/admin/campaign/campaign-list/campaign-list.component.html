@@ -1,0 +1,85 @@
+<section class="section">
+  <div class="container">
+    <h1 class="title">Campañas</h1>
+
+    <button class="button is-primary mb-4" (click)="goToNewCampaign()">+ Agregar campaña</button>
+
+    <div *ngIf="loading">Cargando campañas...</div>
+    <div *ngIf="error" class="notification is-danger">{{ error }}</div>
+
+    <div *ngIf="!loading && campaigns.length === 0" class="has-text-grey">
+      No se encontraron campañas.
+    </div>
+
+    <div class="box" *ngFor="let c of campaigns">
+      <div class="is-flex is-justify-content-space-between is-align-items-center mb-2">
+        <p class="title is-5 has-text-weight-semibold mb-1">{{ c.name }}</p>
+        <div class="buttons is-right">
+          <button type="button" class="button is-light is-small" (click)="toggleEvents(c.id!)">
+            <span class="icon"><i class="fas fa-calendar-alt"></i></span>
+            <span>Jornadas</span>
+          </button>
+          <div class="tooltip-container">
+            <button type="button" class="button is-info is-small" (click)="goToEditCampaign(c.id!)">
+              <span class="icon"><i class="fas fa-edit"></i></span>
+              <span>Editar</span>
+            </button>
+            <div class="tooltip">También podés importar la encuesta</div>
+          </div>
+          <button type="button" class="button is-danger is-small" (click)="deleteCampaign(c.id!)">
+            <span class="icon"><i class="fas fa-trash-alt"></i></span>
+            <span>Borrar</span>
+          </button>
+        </div>
+      </div>
+
+      <p class="is-size-10 has-text-grey-dark">
+        <i class="fas fa-calendar-alt mr-1"></i>
+        Desde: {{ c.startDate | fullDateEs }} |
+        Hasta: {{ c.endDate | fullDateEs }}
+      </p>
+      <p class="is-size-10 has-text-grey-dark">
+        <i class="fas fa-map-marker-alt mr-1"></i>
+        Barrio: {{ neighborhoods[c.neighborhoodId!] }}
+      </p>
+      <div class="field">
+        @if(expandedCampaignId === c.id!) {
+          <p class="has-text-grey mt-2">Jornadas:</p>
+          <button type="button" class="button is-success is-small mt-2" (click)="toggleEventForm(c.id!)">
+            {{ showEventForm[c.id!] ? 'Ocultar jornada' : 'Añadir jornada' }}
+          </button>
+          @if(showEventForm[c.id!]) {
+            <app-event-form
+              [campaignId]="c.id!"
+              [minDate]="c.startDate"
+              [maxDate]="c.endDate"
+              [eventToEdit]="eventToEditMap[c.id!]"
+              (onCreate)="addEvent($event, c.id!)"
+              (onUpdate)="updateEvent($event, c.id!)">
+            </app-event-form>
+          }
+          @if(events[c.id!] && events[c.id!].length != 0){
+            <app-event-list
+              [events]="events[c.id!]"
+              [zonesByEvent]="zonesByEvent"
+              [surveyorsByEvent]="surveyorsByEvent"
+              (onDelete)="deleteEvent($event, c.id!)"
+              (onEdit)="editEvent($event, c.id!)"
+              [isList]="isList">
+            </app-event-list>
+          } @else if(loadingEvents[c.id!]) {
+            <p class="has-text-grey mt-2">Cargando jornadas...</p>
+          } @else {
+            <p class="has-text-grey mt-2">No hay jornadas asociadas.</p>
+          }
+        }
+      </div>
+      <ng-container *ngIf="c?.survey as survey">
+        <app-survey-info-box
+          [survey]="survey"
+          (deleteRequested)="deleteSurvey(c.id!)">
+        </app-survey-info-box>
+      </ng-container>
+    </div>
+  </div>
+</section>
